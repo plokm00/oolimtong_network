@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>울림통 : 공명 네트워크 - 공명지도</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/map.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&family=Cinzel:wght@400;600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="map-container">
+        <!-- 헤더 -->
+        <header class="map-header">
+            <h1 class="header-title">공명지도</h1>
+            <div class="resonance-indicator">
+                <span class="pulse"></span>
+                <span id="resonance-status">대기 중</span>
+            </div>
+        </header>
+
+        <!-- 지도 영역 -->
+        <div class="map-area" id="map-area">
+            <canvas id="map-canvas"></canvas>
+
+            <!-- GPS 허용 요청 -->
+            <div class="gps-prompt" id="gps-prompt">
+                <div class="gps-icon">📍</div>
+                <p>위치 접근을 허용하면<br>가까운 울림통을 찾을 수 있습니다</p>
+                <button class="gps-btn" id="enable-gps">위치 허용</button>
+                <button class="gps-skip" id="skip-gps">시뮬레이션 모드</button>
+            </div>
+
+            <!-- 사용자 위치 마커 -->
+            <div class="user-marker" id="user-marker">
+                <div class="marker-pulse"></div>
+                <div class="marker-dot"></div>
+            </div>
+
+            <!-- 울림통 마커들 (동적 생성) -->
+            <div id="oolimtong-markers"></div>
+        </div>
+
+        <!-- 공명 신호 오버레이 -->
+        <div class="resonance-overlay" id="resonance-overlay">
+            <div class="signal-rings">
+                <div class="signal-ring r1"></div>
+                <div class="signal-ring r2"></div>
+                <div class="signal-ring r3"></div>
+            </div>
+            <div class="signal-info">
+                <span class="signal-label">공명 신호 감지</span>
+                <span class="signal-distance" id="signal-distance">--m</span>
+            </div>
+        </div>
+
+        <!-- 울림통 상세 패널 -->
+        <div class="detail-panel" id="detail-panel">
+            <button class="panel-close" id="panel-close">×</button>
+            <div class="panel-content">
+                <div class="oolimtong-icon" id="panel-icon">⛰️</div>
+                <h2 class="oolimtong-name" id="panel-name">울림통 이름</h2>
+                <div class="oolimtong-status" id="panel-status">
+                    <span class="status-dot"></span>
+                    <span class="status-text">상태</span>
+                </div>
+                <div class="oolimtong-stats">
+                    <div class="stat">
+                        <span class="stat-label">방문자</span>
+                        <span class="stat-value" id="panel-visits">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">수행</span>
+                        <span class="stat-value" id="panel-rituals">0</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">공명</span>
+                        <span class="stat-value" id="panel-resonance">0%</span>
+                    </div>
+                </div>
+                <div class="oolimtong-progress">
+                    <div class="progress-label">풀 가동까지</div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="panel-progress"></div>
+                    </div>
+                </div>
+                <button class="navigate-btn" id="navigate-btn">
+                    <span>🧭</span> 길찾기
+                </button>
+            </div>
+        </div>
+
+        <!-- 하단 네비게이션 -->
+        <nav class="bottom-nav">
+            <a href="practice.html" class="nav-item">
+                <span class="nav-icon">📿</span>
+                <span class="nav-label">수행</span>
+            </a>
+            <a href="map.html" class="nav-item active">
+                <span class="nav-icon">🗺️</span>
+                <span class="nav-label">지도</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">나</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="js/unify.js"></script>
+    <script src="js/user.js"></script>
+    <script src="js/map.js"></script>
+</body>
+
+</html>

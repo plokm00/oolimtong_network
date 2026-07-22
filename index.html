@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NINNIK Character Gallery - 4방향 픽셀 아트</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">NINNIK Character Gallery</h1>
+            <p class="subtitle">4방향 픽셀 아트 캐릭터 컬렉션</p>
+        </header>
+
+        <main class="gallery">
+            <!-- Character 1: Mystical Green Spirit -->
+            <div class="character-card">
+                <div class="card-header">
+                    <h2 class="character-name">🟢 Mystical Green Spirit</h2>
+                    <p class="character-description">녹색 신비로운 존재</p>
+                </div>
+                <div class="character-display">
+                    <canvas id="canvas-mystical" width="240" height="240"></canvas>
+                </div>
+                <div class="controls">
+                    <div class="direction-buttons">
+                        <button class="direction-btn" data-character="mystical" data-direction="north">↑ 북</button>
+                        <button class="direction-btn" data-character="mystical" data-direction="west">← 서</button>
+                        <button class="direction-btn active" data-character="mystical" data-direction="south">↓ 남</button>
+                        <button class="direction-btn" data-character="mystical" data-direction="east">→ 동</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Character 2: Golden Dress Girl -->
+            <div class="character-card">
+                <div class="card-header">
+                    <h2 class="character-name">👗 Golden Dress Girl</h2>
+                    <p class="character-description">황금빛 드레스의 소녀</p>
+                </div>
+                <div class="character-display">
+                    <canvas id="canvas-golden" width="240" height="240"></canvas>
+                </div>
+                <div class="controls">
+                    <div class="direction-buttons">
+                        <button class="direction-btn" data-character="golden" data-direction="north">↑ 북</button>
+                        <button class="direction-btn" data-character="golden" data-direction="west">← 서</button>
+                        <button class="direction-btn active" data-character="golden" data-direction="south">↓ 남</button>
+                        <button class="direction-btn" data-character="golden" data-direction="east">→ 동</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Character 3: Chain Wielder -->
+            <div class="character-card">
+                <div class="card-header">
+                    <h2 class="character-name">⛓️ Chain Wielder</h2>
+                    <p class="character-description">체인을 든 캐릭터</p>
+                </div>
+                <div class="character-display">
+                    <canvas id="canvas-chain" width="240" height="240"></canvas>
+                </div>
+                <div class="controls">
+                    <div class="direction-buttons">
+                        <button class="direction-btn" data-character="chain" data-direction="north">↑ 북</button>
+                        <button class="direction-btn" data-character="chain" data-direction="west">← 서</button>
+                        <button class="direction-btn active" data-character="chain" data-direction="south">↓ 남</button>
+                        <button class="direction-btn" data-character="chain" data-direction="east">→ 동</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>Made with <span class="heart">♥</span> using pixellab MCP</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+[
+  {
+    "id": "ninnik-9fde49d8",
+    "nickname": "니닉",
+    "ninnikTitle": "불꽃의 예언자",
+    "serial": 1,
+    "registeredAt": "2026-01-29T13:29:10.993Z"
+  },
+  {
+    "id": "ninnik-28f693fa",
+    "nickname": "니닉",
+    "ninnikTitle": "깊은 파동술사",
+    "serial": 2,
+    "registeredAt": "2026-01-29T14:11:38.769Z"
+  },
+  {
+    "id": "ninnik-858cee81",
+    "nickname": "니닉",
+    "ninnikTitle": "고요한 순례자",
+    "serial": 3,
+    "registeredAt": "2026-01-29T15:55:01.498Z"
+  }
+]

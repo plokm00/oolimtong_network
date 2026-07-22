@@ -1,0 +1,180 @@
+:root {
+    --color-void: #000000;
+    --color-deep-blue: #0a0e27;
+    --color-mystic-teal: #1a4d5e;
+    --color-sacred-amber: #d4a574;
+    --color-energy-cyan: #00d9ff;
+    --color-resonance-purple: #7b2cbf;
+    --color-glow-white: #ffffff;
+
+    --font-myth: 'Cinzel', serif;
+    --font-body: 'Noto Sans KR', sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    background: url('../assets/bg_field.png') no-repeat center center fixed;
+    background-size: cover;
+    color: var(--color-glow-white);
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+}
+
+body::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 14, 39, 0.6);
+    /* Overlay to ensure text legibility */
+    z-index: -1;
+    pointer-events: none;
+}
+
+.onboarding-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Screen Base Styles */
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s ease, visibility 1s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.screen.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.visual-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+.text-layer {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 2rem;
+    max-width: 800px;
+}
+
+.myth-title {
+    font-family: var(--font-myth);
+    font-size: 4rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 0 20px var(--color-energy-cyan),
+        0 0 40px var(--color-mystic-teal);
+    animation: titleGlow 3s ease-in-out infinite;
+}
+
+.myth-subtitle {
+    font-family: var(--font-myth);
+    font-size: 1.5rem;
+    color: var(--color-sacred-amber);
+    letter-spacing: 0.2em;
+    margin-bottom: 2rem;
+    opacity: 0.8;
+}
+
+.myth-instruction {
+    font-size: 1.3rem;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+    font-weight: 300;
+}
+
+.myth-instruction-en {
+    font-family: var(--font-myth);
+    font-size: 0.95rem;
+    color: var(--color-sacred-amber);
+    opacity: 0.6;
+    font-style: italic;
+}
+
+@keyframes titleGlow {
+
+    0%,
+    100% {
+        text-shadow: 0 0 20px var(--color-energy-cyan),
+            0 0 40px var(--color-mystic-teal);
+    }
+
+    50% {
+        text-shadow: 0 0 30px var(--color-energy-cyan),
+            0 0 60px var(--color-mystic-teal),
+            0 0 80px var(--color-resonance-purple);
+    }
+}
+
+/* Progress Dots */
+.progress-dots {
+    position: absolute;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    gap: 1rem;
+}
+
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    border: 2px solid var(--color-energy-cyan);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dot.active {
+    background: var(--color-energy-cyan);
+    box-shadow: 0 0 20px var(--color-energy-cyan);
+}
+
+/* Pixel Character Styling */
+.pixel-character {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .myth-title {
+        font-size: 2.5rem;
+    }
+
+    .myth-instruction {
+        font-size: 1.1rem;
+    }
+}
