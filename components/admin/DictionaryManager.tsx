@@ -97,17 +97,22 @@ export const DictionaryManager: React.FC<DictionaryManagerProps> = ({
         setVisualBlocks(prev => prev.map(b => b.id === id ? { ...b, caption } : b));
     };
 
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                addVisualBlock(reader.result as string, 'upload');
-                if (fileInputRef.current) {
-                    fileInputRef.current.value = '';
-                }
-            };
-            reader.readAsDataURL(file);
+        if (!file) return;
+
+        try {
+            const formData = new FormData();
+            formData.append('file', file);
+            const response = await fetch('/api/upload', { method: 'POST', body: formData });
+            if (!response.ok) throw new Error('Upload failed');
+            const { url } = await response.json();
+            addVisualBlock(url, 'upload');
+        } catch (error) {
+            console.error('Dictionary image upload failed:', error);
+            alert('IMAGE UPLOAD FAILED');
+        } finally {
+            if (fileInputRef.current) fileInputRef.current.value = '';
         }
     };
 

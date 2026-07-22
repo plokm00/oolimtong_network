@@ -28,3 +28,12 @@ Continue building your app on:
 2. Deploy your chats from the v0 interface
 3. Changes are automatically pushed to this repository
 4. Vercel deploys the latest version from this repository
+
+## Firebase setup
+
+Firebase Authentication manages Google and email/password sign-in. A signed-in user's nickname profile is stored directly in Cloud Firestore from the browser; no Firebase service-account key is needed.
+
+1. In the Firebase Console, enable **Authentication** (Google and Email/Password providers) and **Cloud Firestore**.
+2. Copy your web-app configuration into `.env.local` using [`.env.example`](.env.example) as the template.
+3. In Firestore **Rules**, publish the contents of [`firestore.rules`](firestore.rules). This permits each signed-in user to create and read only their own profile and nickname reservation.
+4. Add the same `NEXT_PUBLIC_FIREBASE_*` values to your Vercel project's environment variables before deploying.

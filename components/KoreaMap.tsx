@@ -20,6 +20,9 @@ import { GatewayModal } from "./GatewayModal"
 
 import { ResonanceMap } from "./ResonanceMap"
 import { CinematicTransition } from "./CinematicTransition"
+import { onAuthStateChanged, signOut } from 'firebase/auth'
+import { firebaseAuth } from '@/lib/firebase-client'
+import { getFirebaseProfile } from '@/lib/firebase-profile'
 
 // Types
 // Star and NebulaCloud interfaces moved to ResonanceMap
@@ -88,16 +91,29 @@ export default function KoreaMap({ bearing = 0 }: { bearing?: number }) {
     const [locations, setLocations] = useState<GatewayLocation[]>([]);
     const [userNodes, setUserNodes] = useState<UserNode[]>([]);
 
-    // Check for existing user session
+    // Restore only profiles that belong to an active Firebase Authentication session.
     useEffect(() => {
-        const stored = localStorage.getItem('ninnik_user');
-        if (stored) {
-            try {
-                setCurrentUser(JSON.parse(stored));
-            } catch (e) {
-                console.error("Failed to parse stored user", e);
+        return onAuthStateChanged(firebaseAuth, async (firebaseUser) => {
+            if (!firebaseUser) {
+                localStorage.removeItem('ninnik_user');
+                setCurrentUser(null);
+                return;
             }
-        }
+
+            try {
+                const profile = await getFirebaseProfile(firebaseUser.uid);
+                if (!profile) {
+                    localStorage.removeItem('ninnik_user');
+                    setCurrentUser(null);
+                    return;
+                }
+                localStorage.setItem('ninnik_user', JSON.stringify(profile));
+                setCurrentUser(profile);
+            } catch (error) {
+                console.error('Failed to restore Firebase user session', error);
+                setCurrentUser(null);
+            }
+        });
     }, []);
 
     useEffect(() => {
@@ -148,7 +164,8 @@ export default function KoreaMap({ bearing = 0 }: { bearing?: number }) {
         }
     };
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        await signOut(firebaseAuth);
         localStorage.removeItem('ninnik_user');
         setCurrentUser(null);
         setEntryStep('none');
