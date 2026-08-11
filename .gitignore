@@ -37,7 +37,8 @@ next-env.d.ts
 # local tooling config
 /.claude/settings.local.json
 /.agents/
-.codex-coordinate-dev.*.log
+# scratch copies and logs left by codex working sessions
+/.codex-*
 
 # superseded artwork originals: kept locally, not referenced by the app
 # (replaced by public/artworks/archive/*, see lib/artwork-data.ts)
