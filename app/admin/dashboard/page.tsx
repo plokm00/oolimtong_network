@@ -88,14 +88,14 @@ export default function AdminDashboard() {
                                 className={`mode-btn ${activeTab === 'DICTIONARY' ? 'active' : ''}`}
                                 style={{ fontSize: '0.7rem', padding: '0.5rem 1rem' }}
                             >
-                                DICTIONARY
+                                NINNIKLOPEDIA
                             </button>
                             <button
                                 onClick={() => setActiveTab('KRAFT')}
                                 className={`mode-btn ${activeTab === 'KRAFT' ? 'active' : ''}`}
                                 style={{ fontSize: '0.7rem', padding: '0.5rem 1rem' }}
                             >
-                                KRAFT MANAGER
+                                NINNIKKRAFT
                             </button>
                             <button
                                 onClick={() => setActiveTab('GATEWAY')}

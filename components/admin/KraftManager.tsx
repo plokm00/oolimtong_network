@@ -38,7 +38,7 @@ export const KraftManager: React.FC<KraftManagerProps> = ({ entries, refreshEntr
     return (
         <div className="kraft-manager-view">
             <div className="admin-header-small" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', gap: '1rem', flexWrap: 'wrap' }}>
-                <h2 style={{ fontWeight: '300', margin: 0 }}>KRAFT PORTFOLIO MANAGER ({allAssets.length})</h2>
+                <h2 style={{ fontWeight: '300', margin: 0 }}>NINNIKKRAFT ({allAssets.length})</h2>
                 <button
                     onClick={refreshEntries}
                     className="admin-btn"

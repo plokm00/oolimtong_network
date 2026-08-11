@@ -496,7 +496,7 @@ export const DictionaryManager: React.FC<DictionaryManagerProps> = ({
 
                     <div style={{ display: 'flex', gap: '1rem' }}>
                         <button type="submit" className="admin-btn">
-                            {editingId ? 'UPDATE ENTRY' : 'UPLOAD TO DICTIONARY'}
+                            {editingId ? 'UPDATE ENTRY' : 'UPLOAD TO NINNIKLOPEDIA'}
                         </button>
                         {editingId && (
                             <button type="button" onClick={cancelEdit} className="admin-btn" style={{ background: '#333', color: 'white' }}>
@@ -565,7 +565,7 @@ export const DictionaryManager: React.FC<DictionaryManagerProps> = ({
                                 <span style={{ marginLeft: '0.5rem', fontSize: '0.8rem', color: '#666' }}>{entry.wordMarks || '미분류'}</span>
                                 <span style={{ marginLeft: '1rem', fontSize: '0.8rem', color: '#555' }}>{entry.category}</span>
                                 {entry.isKraft && (
-                                    <span style={{ marginLeft: '1rem', fontSize: '0.6rem', background: '#333', color: '#888', padding: '0.2rem 0.5rem', letterSpacing: '0.1em' }}>KRAFT</span>
+                                    <span style={{ marginLeft: '1rem', fontSize: '0.6rem', background: '#333', color: '#888', padding: '0.2rem 0.5rem', letterSpacing: '0.1em' }}>NINNIKKRAFT</span>
                                 )}
                             </div>
                             <div style={{ display: 'flex', gap: '1rem' }}>
