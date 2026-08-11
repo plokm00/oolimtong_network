@@ -133,6 +133,10 @@ const STORAGE_KEY = 'ninniklopedia_entries';
 const ADMIN_PW_KEY = 'ninniklopedia_admin_pw';
 const TRASH_KEY = 'ninniklopedia_trash';
 
+// Save failures the admin UI tells apart when reporting what went wrong.
+export const SERVER_SAVE_FAILED = 'SERVER_SAVE_FAILED';
+export const STORAGE_QUOTA_EXCEEDED = 'STORAGE_QUOTA_EXCEEDED';
+
 export const compressImage = async (base64Str: string, maxWidth = 800): Promise<string> => {
   if (!base64Str.startsWith('data:')) return base64Str;
   return new Promise((resolve, reject) => {
@@ -221,20 +225,26 @@ export const getDictionaryEntries = async (): Promise<WordEntry[]> => {
 };
 
 export const saveDictionaryEntries = async (entries: WordEntry[]) => {
+  // 1. Save to Server. A rejected write must surface: fetch only rejects on a
+  // network error, so an unchecked response silently reports failure as success.
+  const res = await fetch('/api/dictionary', {
+    method: 'POST',
+    body: JSON.stringify(entries),
+    headers: { 'Content-Type': 'application/json' }
+  });
+
+  if (!res.ok) throw new Error(`${SERVER_SAVE_FAILED}:${res.status}`);
+
+  // 2. Backup to Local Storage. Only mirror what the server accepted, so the
+  // browser copy can never imply an edit survived when it did not.
   try {
-    // 1. Save to Server
-    await fetch('/api/dictionary', {
-      method: 'POST',
-      body: JSON.stringify(entries),
-      headers: { 'Content-Type': 'application/json' }
-    });
-    // 2. Backup to Local Storage
     localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
-    return true;
   } catch (e) {
-    console.error("Save failed", e);
-    return false;
+    console.error("Local backup failed", e);
+    throw new Error(STORAGE_QUOTA_EXCEEDED);
   }
+
+  return true;
 };
 
 // --- Trash API Sync ---
@@ -257,18 +267,22 @@ export const getTrashedBlocks = async (): Promise<TrashedItem[]> => {
 };
 
 export const saveTrashedBlocks = async (items: TrashedItem[]) => {
+  const res = await fetch('/api/trash', {
+    method: 'POST',
+    body: JSON.stringify(items),
+    headers: { 'Content-Type': 'application/json' }
+  });
+
+  if (!res.ok) throw new Error(`${SERVER_SAVE_FAILED}:${res.status}`);
+
   try {
-    await fetch('/api/trash', {
-      method: 'POST',
-      body: JSON.stringify(items),
-      headers: { 'Content-Type': 'application/json' }
-    });
     localStorage.setItem(TRASH_KEY, JSON.stringify(items));
-    return true;
   } catch (e) {
-    console.error("Trash save failed", e);
-    return false;
+    console.error("Local trash backup failed", e);
+    throw new Error(STORAGE_QUOTA_EXCEEDED);
   }
+
+  return true;
 };
 
 export const moveBlockToTrash = async (entryId: string, blockId: string) => {

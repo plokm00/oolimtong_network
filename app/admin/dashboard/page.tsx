@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { RefreshCw } from 'lucide-react';
-import { getDictionaryEntries, WordEntry, updateAdminPassword, getTrashedBlocks, moveWordToTrash, TrashedItem } from '@/lib/dictionary-data';
+import { getDictionaryEntries, WordEntry, updateAdminPassword, getTrashedBlocks, moveWordToTrash, TrashedItem, SERVER_SAVE_FAILED } from '@/lib/dictionary-data';
 import { getGateways, GatewayLocation } from '@/lib/gateway-data';
 import '../admin.css';
 
@@ -47,9 +47,17 @@ export default function AdminDashboard() {
 
     const handleDelete = async (id: string) => {
         if (confirm('Move this entry to Trash? You can restore it later.')) {
-            await moveWordToTrash(id);
-            await refreshEntries();
-            setStatus('Moved to trash!');
+            try {
+                await moveWordToTrash(id);
+                await refreshEntries();
+                setStatus('Moved to trash!');
+            } catch (error: any) {
+                console.error(error);
+                const message: string = error?.message ?? '';
+                setStatus(message.startsWith(SERVER_SAVE_FAILED)
+                    ? `Error: the server rejected the change (${message.split(':')[1]}). The entry was not moved.`
+                    : 'Error: failed to move the entry to trash.');
+            }
             setTimeout(() => setStatus(''), 3000);
         }
     };

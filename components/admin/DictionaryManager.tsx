@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { WordEntry, addWordEntry, updateWordEntry, VisualBlock, DICTIONARY_NOVELS } from '@/lib/dictionary-data';
+import { WordEntry, addWordEntry, updateWordEntry, VisualBlock, DICTIONARY_NOVELS, SERVER_SAVE_FAILED, STORAGE_QUOTA_EXCEEDED } from '@/lib/dictionary-data';
 import { Sparkles, Edit2, Trash2, Plus, Lock } from 'lucide-react';
 import { Pagination } from './Pagination';
 
@@ -49,8 +49,11 @@ export const DictionaryManager: React.FC<DictionaryManagerProps> = ({
             setTimeout(() => setStatus(''), 3000);
         } catch (error: any) {
             console.error(error);
-            if (error.message === 'STORAGE_QUOTA_EXCEEDED') {
+            const message: string = error?.message ?? '';
+            if (message === STORAGE_QUOTA_EXCEEDED) {
                 setStatus('Error: Storage limit exceeded. Try a smaller image.');
+            } else if (message.startsWith(SERVER_SAVE_FAILED)) {
+                setStatus(`Error: the server rejected the save (${message.split(':')[1]}). Nothing was saved.`);
             } else {
                 setStatus('Failed to save. Please try again.');
             }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { TrashedItem, restoreFromTrash, permanentlyDeleteFromTrash } from '@/lib/dictionary-data';
+import { TrashedItem, restoreFromTrash, permanentlyDeleteFromTrash, SERVER_SAVE_FAILED } from '@/lib/dictionary-data';
 import { Trash2, RotateCcw } from 'lucide-react';
 
 interface TrashManagerProps {
@@ -18,18 +18,34 @@ export const TrashManager: React.FC<TrashManagerProps> = ({ trashedItems, refres
     const totalPages = Math.ceil(trashedItems.length / ITEMS_PER_PAGE);
     const currentTrashedItems = trashedItems.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
+    const reportFailure = (error: any, fallback: string) => {
+        console.error(error);
+        const message: string = error?.message ?? '';
+        setStatus(message.startsWith(SERVER_SAVE_FAILED)
+            ? `Error: the server rejected the change (${message.split(':')[1]}). Nothing changed.`
+            : fallback);
+    };
+
     const handleRestore = async (item: TrashedItem) => {
-        await restoreFromTrash(item.trashId);
-        await refreshEntries();
-        setStatus('Item restored successfully.');
+        try {
+            await restoreFromTrash(item.trashId);
+            await refreshEntries();
+            setStatus('Item restored successfully.');
+        } catch (error: any) {
+            reportFailure(error, 'Error: failed to restore the item.');
+        }
         setTimeout(() => setStatus(''), 3000);
     };
 
     const handlePermanentDelete = async (item: TrashedItem) => {
         if (confirm('Are you sure you want to permanently delete this item? This cannot be undone.')) {
-            await permanentlyDeleteFromTrash(item.trashId);
-            await refreshEntries();
-            setStatus('Item permanently deleted.');
+            try {
+                await permanentlyDeleteFromTrash(item.trashId);
+                await refreshEntries();
+                setStatus('Item permanently deleted.');
+            } catch (error: any) {
+                reportFailure(error, 'Error: failed to delete the item.');
+            }
             setTimeout(() => setStatus(''), 3000);
         }
     };
