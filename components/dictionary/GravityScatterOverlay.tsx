@@ -6,9 +6,10 @@ import { useResonanceGesture, Point } from '@/hooks/useResonanceGesture';
 interface GravityScatterOverlayProps {
     onWhipDetected: () => void;
     children: React.ReactNode;
+    enabled?: boolean;
 }
 
-const GravityScatterOverlay: React.FC<GravityScatterOverlayProps> = ({ onWhipDetected, children }) => {
+const GravityScatterOverlay: React.FC<GravityScatterOverlayProps> = ({ onWhipDetected, children, enabled = true }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
 
     // Drawing Logic (View Layer)
@@ -54,8 +55,10 @@ const GravityScatterOverlay: React.FC<GravityScatterOverlayProps> = ({ onWhipDet
     };
 
     const { handlers, permission } = useResonanceGesture({
-        onTrigger: onWhipDetected,
-        onTrace: drawWind
+        onTrigger: () => {
+            if (enabled) onWhipDetected();
+        },
+        onTrace: enabled ? drawWind : undefined
     });
 
     useEffect(() => {
@@ -77,7 +80,7 @@ const GravityScatterOverlay: React.FC<GravityScatterOverlayProps> = ({ onWhipDet
     return (
         <div
             style={{ position: 'relative', width: '100%', height: '100%' }}
-            {...handlers}
+            {...(enabled ? handlers : {})}
         >
             <canvas
                 ref={canvasRef}
@@ -87,11 +90,12 @@ const GravityScatterOverlay: React.FC<GravityScatterOverlayProps> = ({ onWhipDet
                     left: 0,
                     width: '100vw',
                     height: '100vh',
+                    display: enabled ? 'block' : 'none',
                     pointerEvents: 'none',
                     zIndex: 9999,
                 }}
             />
-            {permission.needed && !permission.granted && (
+            {enabled && permission.needed && !permission.granted && (
                 <div
                     onClick={permission.request}
                     style={{

@@ -11,6 +11,8 @@ interface DictionaryHeaderProps {
     categories: string[];
     mousePos: { x: number; y: number };
     isMouseActive: boolean;
+    categoryAccessory?: React.ReactNode;
+    secondaryFilter?: React.ReactNode;
 }
 
 const DictionaryHeader: React.FC<DictionaryHeaderProps> = ({
@@ -22,22 +24,24 @@ const DictionaryHeader: React.FC<DictionaryHeaderProps> = ({
     setActiveCategory,
     categories,
     mousePos,
-    isMouseActive
+    isMouseActive,
+    categoryAccessory,
+    secondaryFilter
 }) => {
     return (
         <header className="search-section select-none">
             <div className="absolute inset-0 z-0 pointer-events-none" style={{ maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)' }}>
                 <StarfieldCanvas mousePos={mousePos} isMouseActive={isMouseActive} />
             </div>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginTop: '0.5rem', marginBottom: '1.5rem', position: 'relative', zIndex: 2 }}>
+            <div className="dictionary-mode-switcher">
                 <button
-                    onClick={() => { setMode('PEDIA'); setActiveCategory('All'); }}
+                    onClick={() => setMode('PEDIA')}
                     className={`mode-btn ${mode === 'PEDIA' ? 'active' : ''}`}
                 >
                     NINNIKLOPEDIA
                 </button>
                 <button
-                    onClick={() => { setMode('KRAFT'); setActiveCategory('All'); }}
+                    onClick={() => setMode('KRAFT')}
                     className={`mode-btn ${mode === 'KRAFT' ? 'active' : ''}`}
                 >
                     NINNIKKRAFT
@@ -45,11 +49,16 @@ const DictionaryHeader: React.FC<DictionaryHeaderProps> = ({
             </div>
 
             <input
+                id="dictionary-search-input"
                 type="text"
                 className="search-bar"
-                placeholder={mode === 'PEDIA' ? "Search for Ninnikian words.." : "Explore the artworks.."}
+                placeholder={
+                    mode === 'PEDIA'
+                        ? 'Search for Ninnikian words..'
+                        : 'Explore the artworks..'
+                }
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(event) => setSearch(event.target.value)}
             />
             <nav className="category-nav">
                 {categories.map(cat => (
@@ -61,7 +70,13 @@ const DictionaryHeader: React.FC<DictionaryHeaderProps> = ({
                         {cat}
                     </button>
                 ))}
+                {categoryAccessory}
             </nav>
+            {secondaryFilter && (
+                <div className="dictionary-secondary-filter">
+                    {secondaryFilter}
+                </div>
+            )}
         </header>
     );
 };

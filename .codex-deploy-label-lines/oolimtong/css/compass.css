@@ -1,0 +1,788 @@
+/* Compass Main Styles */
+.compass-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    /* background: var(--color-void); Removed to show global background */
+}
+
+/* Map Layer */
+.map-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.3;
+}
+
+#map-canvas {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Compass Core */
+.compass-core {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 400px;
+}
+
+.compass-ring {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 2px solid var(--color-energy-cyan);
+}
+
+.outer-ring {
+    width: 100%;
+    height: 100%;
+    opacity: 0.3;
+    animation: rotateClockwise 30s linear infinite;
+    box-shadow: 0 0 30px rgba(0, 217, 255, 0.3);
+}
+
+.middle-ring {
+    width: 75%;
+    height: 75%;
+    opacity: 0.5;
+    animation: rotateCounterClockwise 20s linear infinite;
+}
+
+.inner-ring {
+    width: 50%;
+    height: 50%;
+    opacity: 0.7;
+    background: radial-gradient(circle,
+            rgba(0, 217, 255, 0.1) 0%,
+            transparent 70%);
+}
+
+@keyframes rotateClockwise {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+@keyframes rotateCounterClockwise {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(-360deg);
+    }
+}
+
+/* Avatar */
+.avatar-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+}
+
+#avatar-sprite {
+    width: 96px;
+    height: 96px;
+    filter: drop-shadow(0 0 20px var(--color-sacred-amber));
+    transition: transform 0.3s ease;
+}
+
+#avatar-sprite:hover {
+    transform: scale(1.1);
+}
+
+/* Compass Needle */
+.compass-needle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 40%;
+    background: linear-gradient(to top,
+            transparent 0%,
+            var(--color-sacred-amber) 50%,
+            var(--color-glow-white) 100%);
+    transform-origin: bottom center;
+    transform: translate(-50%, -100%) rotate(0deg);
+    animation: needlePulse 2s ease-in-out infinite;
+    box-shadow: 0 0 10px var(--color-sacred-amber);
+}
+
+@keyframes needlePulse {
+
+    0%,
+    100% {
+        filter: brightness(1);
+    }
+
+    50% {
+        filter: brightness(1.5);
+    }
+}
+
+/* Cardinal Directions */
+.cardinal {
+    position: absolute;
+    font-family: var(--font-myth);
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-sacred-amber);
+    opacity: 0.8;
+}
+
+.cardinal.north {
+    top: -10%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.cardinal.east {
+    top: 50%;
+    right: -10%;
+    transform: translateY(-50%);
+}
+
+.cardinal.south {
+    bottom: -10%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.cardinal.west {
+    top: 50%;
+    left: -10%;
+    transform: translateY(-50%);
+}
+
+/* Resonance Display */
+.resonance-display {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 5;
+}
+
+#resonance-canvas {
+    width: 100%;
+    height: 100%;
+}
+
+/* HUD */
+.hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 20;
+}
+
+.hud-top {
+    position: absolute;
+    top: 2rem;
+    left: 2rem;
+    right: 2rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.location-display,
+.time-display {
+    background: rgba(10, 14, 39, 0.8);
+    border: 1px solid var(--color-energy-cyan);
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+.label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--color-sacred-amber);
+    margin-bottom: 0.25rem;
+    letter-spacing: 0.1em;
+    opacity: 0.8;
+}
+
+#location-text,
+#time-text {
+    font-family: var(--font-myth);
+    font-size: 1.1rem;
+    color: var(--color-glow-white);
+}
+
+.hud-bottom {
+    position: absolute;
+    bottom: 6rem;
+    left: 2rem;
+    right: 2rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+}
+
+.resonance-meter,
+.node-status {
+    background: rgba(10, 14, 39, 0.9);
+    border: 1px solid var(--color-energy-cyan);
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    flex: 1;
+    pointer-events: all;
+}
+
+.meter-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 0.5rem 0;
+    border: 1px solid var(--color-mystic-teal);
+}
+
+.meter-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg,
+            var(--color-mystic-teal) 0%,
+            var(--color-energy-cyan) 50%,
+            var(--color-sacred-amber) 100%);
+    transition: width 0.5s ease;
+    box-shadow: 0 0 10px var(--color-energy-cyan);
+}
+
+#resonance-value {
+    font-family: var(--font-myth);
+    font-size: 1.2rem;
+    color: var(--color-energy-cyan);
+}
+
+.node-list {
+    max-height: 120px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    margin-top: 0.5rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-energy-cyan) rgba(0, 0, 0, 0.3);
+}
+
+.node-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.node-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+}
+
+.node-list::-webkit-scrollbar-thumb {
+    background: var(--color-energy-cyan);
+    border-radius: 3px;
+}
+
+.node-item {
+    padding: 0.75rem;
+    margin: 0.25rem 0;
+    background: rgba(0, 217, 255, 0.15);
+    border-left: 3px solid var(--color-energy-cyan);
+    border-radius: 3px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.node-item:hover {
+    background: rgba(0, 217, 255, 0.3);
+}
+
+.node-item.selected {
+    background: rgba(212, 165, 116, 0.3);
+    border-left-color: var(--color-sacred-amber);
+}
+
+/* Direction Pad */
+.direction-pad {
+    position: absolute;
+    bottom: 2rem;
+    right: 2rem;
+    width: 150px;
+    height: 150px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0.5rem;
+    pointer-events: all;
+}
+
+.dir-btn {
+    background: rgba(26, 77, 94, 0.6);
+    border: 2px solid var(--color-energy-cyan);
+    color: var(--color-glow-white);
+    font-size: 1.5rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(5px);
+}
+
+.dir-btn:hover {
+    background: rgba(26, 77, 94, 0.9);
+    box-shadow: 0 0 15px var(--color-energy-cyan);
+    transform: scale(1.05);
+}
+
+.dir-btn:active {
+    transform: scale(0.95);
+}
+
+.dir-btn.up {
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.dir-btn.left {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.dir-btn.down {
+    grid-column: 2;
+    grid-row: 3;
+}
+
+.dir-btn.right {
+    grid-column: 3;
+    grid-row: 2;
+}
+
+/* Ritual Button */
+.perform-ritual-btn {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 1rem 2.5rem;
+    background: linear-gradient(135deg,
+            var(--color-resonance-purple) 0%,
+            var(--color-mystic-teal) 100%);
+    border: 2px solid var(--color-sacred-amber);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    pointer-events: all;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    z-index: 50;
+}
+
+.perform-ritual-btn:hover {
+    transform: translateX(-50%) scale(1.05);
+    box-shadow: 0 0 30px var(--color-sacred-amber);
+}
+
+.btn-icon {
+    font-size: 2rem;
+    animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: rotate(0deg);
+    }
+
+    50% {
+        opacity: 0.7;
+        transform: rotate(180deg);
+    }
+}
+
+.btn-text {
+    font-family: var(--font-body);
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-glow-white);
+}
+
+.btn-subtext {
+    font-family: var(--font-myth);
+    font-size: 0.8rem;
+    color: var(--color-sacred-amber);
+    opacity: 0.8;
+}
+
+/* Quest Notification */
+.quest-notification {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(10, 14, 39, 0.95);
+    border: 2px solid var(--color-energy-cyan);
+    border-radius: 15px;
+    padding: 2rem;
+    max-width: 500px;
+    box-shadow: 0 0 50px rgba(0, 217, 255, 0.5);
+    backdrop-filter: blur(20px);
+    z-index: 100;
+    animation: questAppear 0.5s ease-out;
+    pointer-events: all;
+}
+
+@keyframes questAppear {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
+
+.quest-icon {
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+.quest-title {
+    font-family: var(--font-myth);
+    font-size: 1.5rem;
+    color: var(--color-sacred-amber);
+    margin-bottom: 0.5rem;
+}
+
+.quest-description {
+    font-size: 1.1rem;
+    color: var(--color-glow-white);
+    opacity: 0.9;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .compass-core {
+        width: 250px;
+        height: 250px;
+    }
+
+    #avatar-sprite {
+        width: 64px;
+        height: 64px;
+    }
+
+    .hud-top {
+        top: 1rem;
+        left: 1rem;
+        right: 1rem;
+        flex-direction: row;
+        gap: 0.5rem;
+    }
+
+    .hud-bottom {
+        bottom: 10rem;
+        left: 1rem;
+        right: 1rem;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .location-display,
+    .time-display {
+        padding: 0.5rem 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    .location-display .label,
+    .time-display .label {
+        font-size: 0.6rem;
+    }
+
+    #location-text,
+    #time-text {
+        font-size: 0.85rem;
+    }
+
+    .resonance-meter,
+    .node-status {
+        padding: 0.75rem;
+    }
+
+    .node-list {
+        max-height: 80px;
+    }
+
+    .direction-pad {
+        width: 100px;
+        height: 100px;
+        bottom: 1rem;
+        right: 1rem;
+    }
+
+    .dir-btn {
+        font-size: 1.2rem;
+    }
+
+    .perform-ritual-btn {
+        padding: 1rem 2rem;
+        bottom: 1rem;
+    }
+
+    .btn-text {
+        font-size: 1rem;
+    }
+
+    .btn-icon {
+        font-size: 1.5rem;
+    }
+
+    .cardinal {
+        font-size: 1rem;
+    }
+}
+
+/* Ritual Mini-Game Modal */
+.ritual-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.ritual-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+}
+
+.ritual-content {
+    position: relative;
+    background: linear-gradient(135deg, var(--color-deep-blue) 0%, var(--color-void) 100%);
+    border: 2px solid var(--color-sacred-amber);
+    border-radius: 20px;
+    padding: 2rem;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 0 60px rgba(212, 165, 116, 0.3);
+}
+
+.ritual-title {
+    font-family: var(--font-myth);
+    font-size: 2rem;
+    color: var(--color-sacred-amber);
+    margin-bottom: 0.25rem;
+}
+
+.ritual-subtitle {
+    font-family: var(--font-myth);
+    font-size: 1rem;
+    color: var(--color-energy-cyan);
+    opacity: 0.7;
+    margin-bottom: 1.5rem;
+}
+
+.ritual-instructions {
+    margin-bottom: 2rem;
+    color: var(--color-glow-white);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.breathing-container {
+    margin: 2rem 0;
+}
+
+.breathing-circle {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    background: radial-gradient(circle,
+            var(--color-mystic-teal) 0%,
+            var(--color-deep-blue) 100%);
+    border: 3px solid var(--color-energy-cyan);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 4s ease-in-out, box-shadow 4s ease-in-out;
+}
+
+.breathing-circle.inhale {
+    transform: scale(1.3);
+    box-shadow: 0 0 50px var(--color-energy-cyan),
+        0 0 100px var(--color-sacred-amber);
+}
+
+.breathing-circle.exhale {
+    transform: scale(1);
+    box-shadow: 0 0 20px var(--color-energy-cyan);
+}
+
+.breathing-text {
+    font-family: var(--font-myth);
+    font-size: 1.2rem;
+    color: var(--color-glow-white);
+}
+
+.breathing-progress {
+    width: 80%;
+    height: 8px;
+    margin: 0 auto;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.breathing-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg,
+            var(--color-energy-cyan) 0%,
+            var(--color-sacred-amber) 100%);
+    transition: width 0.5s ease;
+}
+
+.target-node {
+    background: rgba(0, 217, 255, 0.1);
+    padding: 1rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.node-name {
+    font-weight: 600;
+    color: var(--color-glow-white);
+}
+
+.node-freq {
+    color: var(--color-energy-cyan);
+    font-family: var(--font-myth);
+}
+
+.ritual-controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.ritual-start-btn,
+.ritual-cancel-btn {
+    padding: 1rem 2rem;
+    border-radius: 30px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.ritual-start-btn {
+    background: linear-gradient(135deg, var(--color-mystic-teal), var(--color-energy-cyan));
+    color: var(--color-void);
+}
+
+.ritual-start-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px var(--color-energy-cyan);
+}
+
+.ritual-cancel-btn {
+    background: transparent;
+    border: 2px solid var(--color-sacred-amber);
+    color: var(--color-sacred-amber);
+}
+
+.ritual-cancel-btn:hover {
+    background: rgba(212, 165, 116, 0.2);
+}
+
+.ritual-result {
+    padding: 2rem;
+    animation: resultAppear 0.5s ease-out;
+}
+
+@keyframes resultAppear {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.result-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.result-title {
+    font-family: var(--font-myth);
+    font-size: 1.5rem;
+    color: var(--color-sacred-amber);
+    margin-bottom: 0.5rem;
+}
+
+.result-value {
+    font-size: 1.2rem;
+    color: var(--color-energy-cyan);
+}
+
+@media (max-width: 768px) {
+    .ritual-content {
+        padding: 1.5rem;
+    }
+
+    .breathing-circle {
+        width: 120px;
+        height: 120px;
+    }
+
+    .ritual-title {
+        font-size: 1.5rem;
+    }
+}

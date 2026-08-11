@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>울림통 : THE GAME</title>
+
+    <!-- All CSS included upfront for smooth SPA transitions -->
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/call.css">
+    <link rel="stylesheet" href="css/onboarding.css">
+    <link rel="stylesheet" href="css/compass.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&family=Cinzel:wght@400;600&display=swap"
+        rel="stylesheet">
+
+    <style>
+        #spa-view-container {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        #spa-view-container.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- SPA Container -->
+    <div id="spa-view-container"></div>
+
+    <!-- Core Scripts -->
+    <script src="js/user.js?v=20240121"></script>
+    <script src="js/unify.js?v=20240121"></script>
+
+    <!-- View-specific scripts -->
+    <script src="js/call.js?v=20240121"></script>
+    <script src="js/onboarding.js?v=20240121"></script>
+    <script src="js/resonance.js?v=20240121"></script>
+    <script src="js/compass.js?v=20240121"></script>
+
+    <script>
+        // Start playing
+        document.addEventListener('DOMContentLoaded', () => {
+            // Debug: Clear button if needed (Alt + R)
+            document.addEventListener('keydown', (e) => {
+                if (e.altKey && e.key === 'r') {
+                    localStorage.clear();
+                    location.reload();
+                }
+            });
+
+            // Check if user exists to determine starting view
+            if (window.userExists && window.userExists()) {
+                window.navigateSPA('onboarding');
+            } else {
+                window.navigateSPA('call');
+            }
+        });
+    </script>
+</body>
+
+</html>

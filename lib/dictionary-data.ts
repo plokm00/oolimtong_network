@@ -9,8 +9,13 @@ export interface VisualBlock {
 export interface WordEntry {
   id: string;
   word: string;
+  wordEn?: string;
+  thumbnailUrl?: string;
   indexNumber: string;
   category: string;
+  novels?: string[];
+  wordMarks?: string;
+  sourceLabel?: string;
   description: string;
   imagePrompt: string;
   visualBlocks: VisualBlock[];
@@ -28,7 +33,13 @@ export interface TrashedItem {
   trashedAt: string;
 }
 
-const categories = ["순수어", "기존어", "합성어", "청록전쟁편수록", "천개의문", "생물", "반생물", "지명", "캐릭터"];
+const categories = ["순수어", "차용어", "합성어", "천개의문", "생물", "반생물", "지명", "캐릭터"];
+export const DICTIONARY_NOVELS = [
+  "청록전쟁 편",
+  "다음 세대 편",
+  "수색대 편",
+  "천개의 문",
+] as const;
 export const KRAFT_CATEGORIES = ["전시작품", "울림통프로젝트", "일러스트레이션"];
 
 const REAL_DATA = [
@@ -47,20 +58,20 @@ const REAL_DATA = [
   { word: "도구모", category: "순수어", description: "카와 니를 뒤쫓게 하기 위해 빌가가 만든 형상. 그러나 수수께끼의 힘이 간섭한 관계로 추격의 목적은 불분명한 상태다.", prompt: "Mysterious construct created by Bilga, enigmatic shadow figure, surreal apparition" },
   { word: "돌", category: "순수어", description: "빌 리크람의 핵에서 비롯된 반생물. 강한 진화의 의지를 가지고 있다.", prompt: "Semi-living core of Bil Likram, evolving crystalline organism, sentient mineral" },
   { word: "돌", category: "순수어", description: "고리의 여섯 사절 중 회색 나비. 빌리크람의 반생물질과 같은 의미.", prompt: "Grey butterfly emissary of Gori, semi-biological butterfly, ethereal wings" },
-  { word: "둔가라", category: "기존어", description: "번개. 니말다라에 지어진 끝이 보이지 않을 만큼 높은 벽돌 탑.", prompt: "Infinite brick tower reaching lightning clouds, Nimaldara architecture, towering monument" },
+  { word: "둔가라", category: "차용어", description: "번개. 니말다라에 지어진 끝이 보이지 않을 만큼 높은 벽돌 탑.", prompt: "Infinite brick tower reaching lightning clouds, Nimaldara architecture, towering monument" },
   { word: "디르테", category: "순수어", description: "빌가의 무기. 하늘빛을 낸다.", prompt: "Sky-blue glowing weapon, Bilga technological artifact, azure energy" },
   { word: "딜루비움", category: "순수어", description: "홍수가 있었던 지역에만 생성되는 귀한 보석. 다섯 가지 색이 섞여 임의의 패턴을 생성한다.", prompt: "Multicolored rare gemstone with swirling patterns, post-flood crystalline treasure, iridescent jewel" },
   { word: "딤", category: "순수어", description: "고리의 여섯 사절 중 하얀 아르마딜로.", prompt: "White armadillo emissary of Gori, sacred ceramic-like creature" },
   { word: "딩", category: "순수어", description: "사슴을 닮고 나무무늬를 한 님의 이동형 생물.", prompt: "Wooden-patterned deer creature, mobile lifeform of Nim, organic bark texture" },
   { word: "딩굴", category: "순수어", description: "한없이 자라는 덩굴, 둥글둥글 뭉쳐서 산다.", prompt: "Ever-growing spherical vines, cluster of organic round plants, lush vegetation" },
-  { word: "라바", category: "기존어", description: "님의 이동형 생물. 높은 지능이 있어 학습이 놀랍도록 빠르지만 수동적인 성격이라 길들이지 않을 경우 그냥 비문명 생물과 다를 게 없다.", prompt: "Highly intelligent but passive creature of Nim, scholarly beast, docile lifeform" },
+  { word: "라바", category: "차용어", description: "님의 이동형 생물. 높은 지능이 있어 학습이 놀랍도록 빠르지만 수동적인 성격이라 길들이지 않을 경우 그냥 비문명 생물과 다를 게 없다.", prompt: "Highly intelligent but passive creature of Nim, scholarly beast, docile lifeform" },
   { word: "룽동", category: "순수어", description: "오드나타 성의 중심부를 일컫는 말. 본래 마카롱을 닮은 돔이 있는 중심건물 하나만을 의미했다.", prompt: "Macaron-shaped dome building, center of Odonata castle, unique architecture" },
-  { word: "메아이네이", category: "기존어", description: "평원. 님의 지명.", prompt: "Vast serene plains of Nim, ethereal landscape, endless horizon" },
+  { word: "메아이네이", category: "차용어", description: "평원. 님의 지명.", prompt: "Vast serene plains of Nim, ethereal landscape, endless horizon" },
   { word: "모락", category: "순수어", description: "미누가 네골로 인해 둘로 분리되어 진화된 종족의 하나. 뚱뚱한 새를 닮았고 머리에 여섯 개의 화려한 장식깃이 나있다.", prompt: "Plump bird-like race with six ornate head feathers, Morak tribe, evolutionary variant" },
-  { word: "모르쇠", category: "기존어", description: "도구모가 만든 분신. 그림자가 있는 곳이면 어디든 나타날 수 있다.", prompt: "Shadow avatar appearing in darkness, silent stalker, enigmatic duplicate" },
+  { word: "모르쇠", category: "차용어", description: "도구모가 만든 분신. 그림자가 있는 곳이면 어디든 나타날 수 있다.", prompt: "Shadow avatar appearing in darkness, silent stalker, enigmatic duplicate" },
   { word: "몬자", category: "순수어", description: "고리의 여섯 사절 중 분홍색 곰.", prompt: "Pink bear emissary of Gori, soft but powerful sentinel" },
   { word: "몰", category: "순수어", description: "빌리크람의 심연 속 고대원념. 강한 미지의 힘과 의지를 가지고 있다.", prompt: "Ancient primordial consciousness in Bil Likram abyss, dark powerful entity" },
-  { word: "뮤", category: "기존어", description: "카의 분신. 필그림의 시조이자 자기부유장치의 시조가 된다.", prompt: "Mu avatar, ancestor of self-floating technology, ethereal levitating figure" },
+  { word: "뮤", category: "차용어", description: "카의 분신. 필그림의 시조이자 자기부유장치의 시조가 된다.", prompt: "Mu avatar, ancestor of self-floating technology, ethereal levitating figure" },
   { word: "미누", category: "순수어", description: "슈자라의 원주민. 단달계의 고대종족.", prompt: "Aboriginal tribe of Shujara, ancient Dandal race, tribal elders" },
   { word: "밀가", category: "순수어", description: "빌가 사절단의 총단장.", prompt: "Grand commander of Bilga messengers, noble leader, authoritative figure" },
   { word: "벨루비", category: "순수어", description: "딜루비움 정제 시 간혹 나오는 붉은 핵. 네골에 쓰이는 최상급 심의 재료가 되기도 한다.", prompt: "Red glowing core extracted from Diluvium, powerful heart material for Negol" },
@@ -81,11 +92,11 @@ const REAL_DATA = [
   { word: "에봇", category: "순수어", description: "빌리크람의 몰의 세력에 대항할 지혜를 찾으러 우주에 파견된 고리의 여섯 사절 중 우두머리. 푸른 여우.", prompt: "Blue fox leader of emissaries, Ebot seeker of wisdom, cosmic messenger" },
   { word: "오나", category: "순수어", description: "가미진으로부터 파생된 사역종족. 오드나타 성의 주인. 하나의 날개가 있다.", prompt: "One-winged servant race Ona, lords of Odonata castle, ethereal servants" },
   { word: "오드나타", category: "순수어", description: "다른 우주에서 피는 꽃의 이름이자, 가미진이 원반행성이 지나는 우주마다 세운 시공의 문의 이름.", prompt: "Flower from another universe, gate of Odonata, space-time portal" },
-  { word: "오르골", category: "기존어", description: "도구모 만든 분신. 생명체의 꿈을 빼앗거나, 반대로 생명체에 꿈을 심어주거나 할 수 있다.", prompt: "Dream-manipulator Orgel, music box avatar, surreal puppet" },
+  { word: "오르골", category: "차용어", description: "도구모 만든 분신. 생명체의 꿈을 빼앗거나, 반대로 생명체에 꿈을 심어주거나 할 수 있다.", prompt: "Dream-manipulator Orgel, music box avatar, surreal puppet" },
   { word: "와모라", category: "순수어", description: "품는 돌. 고리의 밀법에 쓰이는 도구 중 하나.", prompt: "The Embracing Stone Wamora, occult magic focal point, warm glowing mineral" },
-  { word: "이라", category: "기존어", description: "카의 분신. 장인의 시조.", prompt: "Ira avatar, forefather of all artisans, divine craftsman" },
+  { word: "이라", category: "차용어", description: "카의 분신. 장인의 시조.", prompt: "Ira avatar, forefather of all artisans, divine craftsman" },
   { word: "지오드", category: "순수어", description: "강렬한 마력이 담긴 보석. 자줏빛을 낸다.", prompt: "Intense violet magical geode, pulsing arcane crystal, purple power" },
-  { word: "청조등화", category: "기존어", description: "시공의 통로를 안내하는 오나의 태엽반생물 사역꾼. 바른길로 안내한다는 푸른빛을 내는 새.", prompt: "Blue light guiding bird, clockwork servant Cheongjo Deunghwa, messenger of light" },
+  { word: "청조등화", category: "차용어", description: "시공의 통로를 안내하는 오나의 태엽반생물 사역꾼. 바른길로 안내한다는 푸른빛을 내는 새.", prompt: "Blue light guiding bird, clockwork servant Cheongjo Deunghwa, messenger of light" },
   { word: "초나", category: "순수어", description: "결혼하는 나무. 결혼 전을 일컬음.", prompt: "The Marrying Tree Chona, pre-matrimony phase, majestic white tree" },
   { word: "초로나", category: "순수어", description: "초나가 결혼한 후의 이름.", prompt: "Chorona, the fully bloomed marrying tree, interconnected forest giants" },
   { word: "초로굴", category: "순수어", description: "초나의 묘목 군락.", prompt: "Groves of Chona saplings, young magical forest, Chorogul" },
@@ -96,9 +107,9 @@ const REAL_DATA = [
   { word: "클로뎀", category: "순수어", description: "분홍빛이 나는 보석. 먹을 수 있는 보석이다.", prompt: "Edible pink gems, Clodem mineral, soft glowing candy-like stone" },
   { word: "키슬라", category: "순수어", description: "빌가의 무기. 진한 자줏빛을 낸다.", prompt: "Deep violet Bilga weapon, royal energy tool, dark amethyst glow" },
   { word: "파그라", category: "순수어", description: "다른 우주의 심해의 산호장작. 억겁의 세월동안 기름에 재워져 있었기 때문에 한번 불을 붙이면 절대로 꺼지지 않는다. 혹은 기름에 재운 시간만큼만 지속되기도 한다. 후에 톨라, 흘리바라와 함께 니닉의 3대 보물이 된다.", prompt: "Eternal coral wood Pagra, deep-sea ancient fuel, unquenchable fire" },
-  { word: "필그림", category: "기존어", description: "니니키안 시대에 등장한 우주와 우주를 옮겨 다니는 철새 종족.", prompt: "Pilgrim race of migratory birds, space travelers, ethereal bird flock" },
+  { word: "필그림", category: "차용어", description: "니니키안 시대에 등장한 우주와 우주를 옮겨 다니는 철새 종족.", prompt: "Pilgrim race of migratory birds, space travelers, ethereal bird flock" },
   { word: "하르초크", category: "순수어", description: "님의 지명. 도구모와 오르골의 근거지가 되는 숲.", prompt: "Harchock forest, headquarters of Dogumo and Orgel, dark eerie woods" },
-  { word: "홍접등화", category: "기존어", description: "시공의 통로를 안내하는 오나의 태엽반생물 사역꾼. 여행자를 교란시키거나 오나의 성으로 안내하는 붉은빛을 내는 나비.", prompt: "Red light deceptive butterfly, clockwork servant Hongjeop Deunghwa, erratic guide" },
+  { word: "홍접등화", category: "차용어", description: "시공의 통로를 안내하는 오나의 태엽반생물 사역꾼. 여행자를 교란시키거나 오나의 성으로 안내하는 붉은빛을 내는 나비.", prompt: "Red light deceptive butterfly, clockwork servant Hongjeop Deunghwa, erratic guide" },
   { word: "후후", category: "순수어", description: "니니키안 소녀의 이름.", prompt: "Ninnikian girl Huhu, youthful curiosity, futuristic traditional attire" }
 ];
 
@@ -108,6 +119,8 @@ const generateSeededEntries = (): WordEntry[] => {
     word: data.word,
     indexNumber: (i + 1).toString().padStart(4, '0'),
     category: data.category,
+    novels: ["청록전쟁 편"],
+    wordMarks: data.category === "차용어" ? "●" : data.category === "순수어" ? "○" : "◉",
     description: data.description,
     imagePrompt: data.prompt,
     visualBlocks: [],

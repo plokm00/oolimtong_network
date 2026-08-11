@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>울림통 : 공명 네트워크 - 의례 학습</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/practice.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&family=Cinzel:wght@400;600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="practice-container">
+        <!-- 헤더 -->
+        <header class="practice-header">
+            <div class="user-info">
+                <span class="user-name" id="user-name">수행자</span>
+                <span class="user-number" id="user-number">#0000</span>
+            </div>
+            <div class="talisman-count">
+                <span class="talisman-icon">◇</span>
+                <span id="talisman-count">0</span> / <span id="unlock-next">3</span>
+            </div>
+        </header>
+
+        <!-- 메인 콘텐츠 -->
+        <main class="practice-main">
+            <h1 class="page-title">의례 학습</h1>
+            <p class="page-subtitle">Digital Initiation</p>
+            <p class="page-desc">
+                부적을 모아 울림통의 위치를 해제하세요
+            </p>
+
+            <!-- 수행 미니게임 그리드 -->
+            <div class="practice-grid">
+                <!-- 호흡 수행 -->
+                <div class="practice-card" data-practice="breath">
+                    <div class="card-icon">🌬️</div>
+                    <h3 class="card-title">호흡 수행</h3>
+                    <p class="card-desc">들숨과 날숨의 리듬을 따라가세요</p>
+                    <div class="card-status">
+                        <span class="status-badge available">수행 가능</span>
+                    </div>
+                    <button class="practice-btn">시작</button>
+                </div>
+
+                <!-- 손동작 (Mudra) -->
+                <div class="practice-card" data-practice="mudra">
+                    <div class="card-icon">🤲</div>
+                    <h3 class="card-title">결인 수행</h3>
+                    <p class="card-desc">손의 형상으로 의미를 전하세요</p>
+                    <div class="card-status">
+                        <span class="status-badge coming">준비 중</span>
+                    </div>
+                    <button class="practice-btn" disabled>곧 공개</button>
+                </div>
+
+                <!-- 니닉어 음성 -->
+                <div class="practice-card" data-practice="voice">
+                    <div class="card-icon">🗣️</div>
+                    <h3 class="card-title">음성 수행</h3>
+                    <p class="card-desc">니닉어의 소리를 따라 발성하세요</p>
+                    <div class="card-status">
+                        <span class="status-badge coming">준비 중</span>
+                    </div>
+                    <button class="practice-btn" disabled>곧 공개</button>
+                </div>
+
+                <!-- 발구르기 -->
+                <div class="practice-card" data-practice="stomp">
+                    <div class="card-icon">👣</div>
+                    <h3 class="card-title">지동 수행</h3>
+                    <p class="card-desc">땅을 울려 공명을 일으키세요</p>
+                    <div class="card-status">
+                        <span class="status-badge coming">준비 중</span>
+                    </div>
+                    <button class="practice-btn" disabled>곧 공개</button>
+                </div>
+            </div>
+
+            <!-- 획득한 부적 -->
+            <section class="talismans-section">
+                <h2 class="section-title">획득한 부적</h2>
+                <div class="talismans-grid" id="talismans-grid">
+                    <!-- 동적으로 채워짐 -->
+                    <p class="empty-message" id="empty-talismans">아직 획득한 부적이 없습니다</p>
+                </div>
+            </section>
+
+            <!-- 울림통 잠금해제 상태 -->
+            <section class="unlock-section">
+                <h2 class="section-title">울림통 위치</h2>
+                <div class="unlock-grid" id="unlock-grid">
+                    <div class="unlock-item locked" data-index="0">
+                        <div class="unlock-icon">🔒</div>
+                        <span class="unlock-name">??? 울림통</span>
+                        <span class="unlock-req">부적 3개 필요</span>
+                    </div>
+                    <div class="unlock-item locked" data-index="1">
+                        <div class="unlock-icon">🔒</div>
+                        <span class="unlock-name">??? 울림통</span>
+                        <span class="unlock-req">부적 7개 필요</span>
+                    </div>
+                    <div class="unlock-item locked" data-index="2">
+                        <div class="unlock-icon">🔒</div>
+                        <span class="unlock-name">??? 울림통</span>
+                        <span class="unlock-req">부적 12개 필요</span>
+                    </div>
+                    <div class="unlock-item locked" data-index="3">
+                        <div class="unlock-icon">🔒</div>
+                        <span class="unlock-name">??? 울림통</span>
+                        <span class="unlock-req">부적 18개 필요</span>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 하단 네비게이션 -->
+        <nav class="bottom-nav">
+            <a href="practice.html" class="nav-item active">
+                <span class="nav-icon">📿</span>
+                <span class="nav-label">수행</span>
+            </a>
+            <a href="map.html" class="nav-item">
+                <span class="nav-icon">🗺️</span>
+                <span class="nav-label">지도</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">나</span>
+            </a>
+        </nav>
+    </div>
+
+    <script src="js/user.js"></script>
+    <script src="js/unify.js"></script>
+    <script src="js/practice.js"></script>
+</body>
+
+</html>

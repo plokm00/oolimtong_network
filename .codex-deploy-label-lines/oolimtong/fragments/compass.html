@@ -1,0 +1,122 @@
+<div class="compass-container">
+    <!-- Background Map -->
+    <div class="map-layer">
+        <canvas id="map-canvas" width="1920" height="1080"></canvas>
+    </div>
+
+    <!-- Main Compass -->
+    <div class="compass-core">
+        <div class="compass-ring outer-ring"></div>
+        <div class="compass-ring middle-ring"></div>
+        <div class="compass-ring inner-ring"></div>
+
+        <!-- Character Avatar -->
+        <div class="avatar-container">
+            <img src="assets/characters/chain-wielder/south.png" alt="Avatar" id="avatar-sprite"
+                class="pixel-character">
+        </div>
+
+        <!-- Direction Needle -->
+        <div class="compass-needle"></div>
+
+        <!-- Cardinal Directions -->
+        <div class="cardinal north">N</div>
+        <div class="cardinal east">E</div>
+        <div class="cardinal south">S</div>
+        <div class="cardinal west">W</div>
+    </div>
+
+    <!-- Resonance Visualization -->
+    <div class="resonance-display">
+        <canvas id="resonance-canvas" width="800" height="800"></canvas>
+    </div>
+
+    <!-- HUD -->
+    <div class="hud">
+        <div class="hud-top">
+            <div class="location-display">
+                <span class="label">위치</span>
+                <span id="location-text">강원 · 미지의 영역</span>
+            </div>
+            <div class="time-display">
+                <span class="label">시각</span>
+                <span id="time-text">--:--</span>
+            </div>
+        </div>
+
+        <div class="hud-bottom">
+            <div class="resonance-meter">
+                <span class="label">공명 계수</span>
+                <div class="meter-bar">
+                    <div class="meter-fill" id="resonance-fill"></div>
+                </div>
+                <span id="resonance-value">0.00</span>
+            </div>
+
+            <div class="node-status">
+                <span class="label">울림통 접속</span>
+                <div class="node-list" id="node-list">
+                    <!-- Dynamically filled -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Button -->
+    <button class="perform-ritual-btn" id="ritual-btn">
+        <span class="btn-icon">✧</span>
+        <span class="btn-text">의식 수행</span>
+        <span class="btn-subtext">Perform Ritual</span>
+    </button>
+
+    <!-- Quest Notification -->
+    <div class="quest-notification" id="quest-notify" style="display: none;">
+        <div class="quest-icon">⚡</div>
+        <div class="quest-content">
+            <h3 class="quest-title">새로운 울림통 발견</h3>
+            <p class="quest-description">10m 이내에 공명지가 감지되었습니다</p>
+        </div>
+    </div>
+
+    <!-- Ritual Mini-Game Modal -->
+    <div class="ritual-modal" id="ritual-modal" style="display: none;">
+        <div class="ritual-backdrop"></div>
+        <div class="ritual-content">
+            <h2 class="ritual-title">🔮 의식 수행</h2>
+            <p class="ritual-subtitle">Perform the Ritual</p>
+
+            <div class="ritual-instructions">
+                <p>선택한 울림통과 공명하기 위해<br><strong>호흡 패턴을 따라하세요</strong></p>
+            </div>
+
+            <!-- Breathing Circle -->
+            <div class="breathing-container">
+                <div class="breathing-circle" id="breathing-circle">
+                    <span class="breathing-text" id="breathing-text">준비</span>
+                </div>
+                <div class="breathing-progress">
+                    <div class="breathing-fill" id="breathing-fill"></div>
+                </div>
+            </div>
+
+            <!-- Target Node Info -->
+            <div class="target-node" id="target-node-info">
+                <span class="node-name" id="ritual-node-name">설악산 울림통</span>
+                <span class="node-freq" id="ritual-node-freq">432 Hz</span>
+            </div>
+
+            <!-- Ritual Controls -->
+            <div class="ritual-controls">
+                <button class="ritual-start-btn" id="ritual-start-btn">시작하기</button>
+                <button class="ritual-cancel-btn" id="ritual-cancel-btn">취소</button>
+            </div>
+
+            <!-- Ritual Result -->
+            <div class="ritual-result" id="ritual-result" style="display: none;">
+                <div class="result-icon">✨</div>
+                <h3 class="result-title">공명 성공!</h3>
+                <p class="result-value">+<span id="result-resonance">0</span> 공명력</p>
+            </div>
+        </div>
+    </div>
+</div>

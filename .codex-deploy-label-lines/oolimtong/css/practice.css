@@ -1,0 +1,332 @@
+/* 수행 허브 페이지 스타일 */
+.practice-container {
+    min-height: 100vh;
+    background: var(--color-void);
+    padding-bottom: 80px;
+}
+
+/* 헤더 */
+.practice-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: rgba(10, 14, 39, 0.9);
+    border-bottom: 1px solid var(--color-mystic-teal);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.user-name {
+    font-weight: 600;
+    color: var(--color-sacred-amber);
+}
+
+.user-number {
+    font-size: 0.85rem;
+    color: var(--color-energy-cyan);
+}
+
+.talisman-count {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: rgba(0, 217, 255, 0.1);
+    border: 1px solid var(--color-energy-cyan);
+    border-radius: 20px;
+}
+
+.talisman-icon {
+    color: var(--color-sacred-amber);
+    animation: talismanPulse 2s ease-in-out infinite;
+}
+
+@keyframes talismanPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+}
+
+/* 메인 */
+.practice-main {
+    padding: 2rem 1.5rem;
+}
+
+.page-title {
+    font-family: var(--font-myth);
+    font-size: 2rem;
+    color: var(--color-sacred-amber);
+    text-align: center;
+    margin-bottom: 0.25rem;
+}
+
+.page-subtitle {
+    font-family: var(--font-myth);
+    font-size: 1rem;
+    color: var(--color-energy-cyan);
+    text-align: center;
+    letter-spacing: 0.2em;
+    margin-bottom: 1rem;
+}
+
+.page-desc {
+    text-align: center;
+    color: var(--color-glow-white);
+    opacity: 0.8;
+    margin-bottom: 2rem;
+}
+
+/* 수행 그리드 */
+.practice-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 3rem;
+}
+
+.practice-card {
+    background: linear-gradient(135deg,
+            rgba(26, 77, 94, 0.6),
+            rgba(10, 14, 39, 0.8));
+    border: 1px solid var(--color-mystic-teal);
+    border-radius: 15px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.practice-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 217, 255, 0.2);
+    border-color: var(--color-energy-cyan);
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.card-title {
+    font-family: var(--font-myth);
+    font-size: 1.1rem;
+    color: var(--color-sacred-amber);
+    margin-bottom: 0.5rem;
+}
+
+.card-desc {
+    font-size: 0.85rem;
+    color: var(--color-glow-white);
+    opacity: 0.7;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+}
+
+.card-status {
+    margin-bottom: 1rem;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+}
+
+.status-badge.available {
+    background: rgba(0, 217, 255, 0.2);
+    color: var(--color-energy-cyan);
+    border: 1px solid var(--color-energy-cyan);
+}
+
+.status-badge.coming {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--color-glow-white);
+    opacity: 0.5;
+}
+
+.status-badge.completed {
+    background: rgba(212, 165, 116, 0.2);
+    color: var(--color-sacred-amber);
+    border: 1px solid var(--color-sacred-amber);
+}
+
+.practice-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background: linear-gradient(135deg,
+            var(--color-mystic-teal),
+            var(--color-energy-cyan));
+    border: none;
+    border-radius: 25px;
+    color: var(--color-void);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.practice-btn:hover:not(:disabled) {
+    transform: scale(1.05);
+    box-shadow: 0 5px 20px rgba(0, 217, 255, 0.4);
+}
+
+.practice-btn:disabled {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--color-glow-white);
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 섹션 */
+.section-title {
+    font-family: var(--font-myth);
+    font-size: 1.3rem;
+    color: var(--color-sacred-amber);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-mystic-teal);
+}
+
+/* 부적 섹션 */
+.talismans-section {
+    margin-bottom: 3rem;
+}
+
+.talismans-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.talisman-item {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg,
+            var(--color-sacred-amber),
+            var(--color-resonance-purple));
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    animation: talismanFloat 3s ease-in-out infinite;
+}
+
+@keyframes talismanFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.empty-message {
+    color: var(--color-glow-white);
+    opacity: 0.5;
+    font-size: 0.9rem;
+}
+
+/* 잠금해제 섹션 */
+.unlock-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.unlock-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(10, 14, 39, 0.8);
+    border: 1px solid var(--color-mystic-teal);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.unlock-item.locked {
+    opacity: 0.6;
+}
+
+.unlock-item.unlocked {
+    border-color: var(--color-energy-cyan);
+    background: rgba(0, 217, 255, 0.1);
+}
+
+.unlock-item.unlocked .unlock-icon {
+    font-size: 1.5rem;
+}
+
+.unlock-icon {
+    font-size: 1.2rem;
+}
+
+.unlock-name {
+    flex: 1;
+    color: var(--color-glow-white);
+    font-weight: 500;
+}
+
+.unlock-req {
+    font-size: 0.8rem;
+    color: var(--color-energy-cyan);
+}
+
+/* 하단 네비게이션 */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-around;
+    background: rgba(10, 14, 39, 0.95);
+    border-top: 1px solid var(--color-mystic-teal);
+    padding: 0.75rem 0;
+    backdrop-filter: blur(10px);
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    text-decoration: none;
+    color: var(--color-glow-white);
+    opacity: 0.6;
+    transition: all 0.3s ease;
+}
+
+.nav-item.active {
+    opacity: 1;
+    color: var(--color-energy-cyan);
+}
+
+.nav-icon {
+    font-size: 1.5rem;
+}
+
+.nav-label {
+    font-size: 0.75rem;
+}
+
+/* 반응형 */
+@media (max-width: 400px) {
+    .practice-grid {
+        grid-template-columns: 1fr;
+    }
+}

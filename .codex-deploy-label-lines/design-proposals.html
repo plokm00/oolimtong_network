@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NINNIKLOPEDIA — 만다라 패턴 시스템 제안 v4</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#0a0a0f; color:#e0d8c8; font-family:'Courier New',monospace; min-height:100vh; }
+.top-bar { text-align:center; padding:18px; border-bottom:1px solid #3a3020; }
+.top-bar h1 { font-size:11px; letter-spacing:.25em; color:#c8a84b; text-transform:uppercase; }
+.top-bar p { font-size:9px; color:#7a6a4a; letter-spacing:.15em; margin-top:4px; }
+.tabs { display:flex; border-bottom:1px solid #3a3020; }
+.tab { flex:1; padding:10px; text-align:center; font-size:9px; letter-spacing:.15em; text-transform:uppercase; cursor:pointer; color:#7a6a4a; border-bottom:2px solid transparent; transition:all .2s; }
+.tab.active { color:#c8a84b; border-bottom-color:#c8a84b; }
+.panel { display:none; padding:24px; }
+.panel.active { display:block; }
+
+/* ─── PANEL 1: 키매틱스 (Cymatics) ─── */
+.mode-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:24px; }
+.mode-card { background:#12100c; border:1px solid #3a3020; border-radius:8px; padding:16px; text-align:center; cursor:pointer; transition:all .2s; }
+.mode-card:hover, .mode-card.selected { border-color:#c8a84b; background:#1a1408; }
+.mode-card h3 { font-size:10px; letter-spacing:.2em; color:#c8a84b; text-transform:uppercase; margin-bottom:6px; }
+.mode-card p { font-size:9px; color:#6a5a3a; line-height:1.5; }
+.mode-card canvas { display:block; margin:10px auto 0; border-radius:4px; }
+
+.demo-area { background:#0e0c08; border:1px solid #3a3020; border-radius:8px; padding:20px; }
+.demo-row { display:flex; gap:20px; align-items:flex-start; }
+.demo-canvas-wrap { position:relative; flex-shrink:0; }
+.demo-canvas-wrap canvas { border-radius:50%; display:block; }
+.controls { flex:1; }
+.ctrl-group { margin-bottom:14px; }
+.ctrl-label { font-size:9px; color:#9a8a6a; letter-spacing:.15em; text-transform:uppercase; margin-bottom:5px; display:flex; justify-content:space-between; }
+.ctrl-label span { color:#c8a84b; }
+input[type=range] { width:100%; accent-color:#c8a84b; cursor:pointer; height:3px; }
+.ctrl-row { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+.pill { padding:4px 10px; border:1px solid #3a3020; border-radius:20px; font-size:9px; cursor:pointer; color:#7a6a4a; transition:all .2s; }
+.pill:hover, .pill.active { border-color:#c8a84b; color:#c8a84b; background:#1a1408; }
+.stage-clear { background:#1a1a0a; border:1px solid #4a4a10; border-radius:6px; padding:10px 14px; margin-top:14px; }
+.stage-clear-title { font-size:8px; color:#aaaa40; letter-spacing:.2em; text-transform:uppercase; margin-bottom:4px; }
+.stage-clear-desc { font-size:9px; color:#8a8a50; line-height:1.6; }
+
+.section-title { font-size:9px; color:#9a8a6a; letter-spacing:.2em; text-transform:uppercase; margin-bottom:12px; padding-bottom:6px; border-bottom:1px solid #2a2010; }
+
+/* ─── PANEL 2: 파라메트릭 장미 ─── */
+.rose-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; margin-bottom:20px; }
+.rose-card { background:#12100c; border:1px solid #3a3020; border-radius:6px; padding:8px; text-align:center; cursor:pointer; transition:all .2s; }
+.rose-card:hover, .rose-card.selected { border-color:#d4a820; background:#1a1408; }
+.rose-card canvas { display:block; margin:0 auto 5px; }
+.rose-card p { font-size:8px; color:#9a8a6a; }
+
+/* ─── PANEL 3: 리사주 ─── */
+.lissajous-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
+.liss-card { background:#12100c; border:1px solid #3a3020; border-radius:6px; padding:8px; text-align:center; cursor:pointer; transition:all .2s; }
+.liss-card:hover, .liss-card.selected { border-color:#d4a820; background:#1a1408; }
+.liss-card canvas { display:block; margin:0 auto 5px; }
+.liss-card p { font-size:8px; color:#9a8a6a; }
+
+.split { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+
+.badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:8px; letter-spacing:.1em; text-transform:uppercase; }
+.badge-new { background:#2a2010; color:#c8a84b; border:1px solid #4a3820; }
+.badge-freq { background:#102010; color:#40c840; border:1px solid #204020; }
+
+.freq-bar-wrap { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.freq-bar-label { font-size:9px; color:#7a6a4a; width:60px; flex-shrink:0; }
+.freq-bar { flex:1; height:4px; background:#2a2010; border-radius:2px; overflow:hidden; }
+.freq-bar-fill { height:100%; background:linear-gradient(90deg,#c8a84b,#f0c84b); border-radius:2px; transition:width .3s; }
+
+.animate-btn { padding:8px 20px; background:#1a1408; border:1px solid #c8a84b; border-radius:4px; color:#c8a84b; font-size:9px; letter-spacing:.2em; text-transform:uppercase; cursor:pointer; transition:all .2s; }
+.animate-btn:hover { background:#c8a84b; color:#0a0a0f; }
+.animate-btn.running { background:#c8a84b20; border-color:#c8a84b80; animation:pulse-border 1s infinite; }
+@keyframes pulse-border { 0%,100%{border-color:#c8a84b40} 50%{border-color:#c8a84b} }
+
+.info-box { background:#100e08; border-left:2px solid #c8a84b; padding:10px 14px; margin-bottom:14px; border-radius:0 4px 4px 0; }
+.info-box p { font-size:9px; color:#9a8a6a; line-height:1.7; }
+.info-box strong { color:#c8a84b; }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>NINNIKLOPEDIA — 만다라 패턴 시스템</h1>
+  <p>키매틱스 주파수 탐색 · 파라메트릭 장미 · 리사주 공명 &nbsp;|&nbsp; v4 제안</p>
+</div>
+
+<div class="tabs">
+  <div class="tab active" data-tab="cymatics">① 키매틱스 주파수</div>
+  <div class="tab" data-tab="rose">② 파라메트릭 장미</div>
+  <div class="tab" data-tab="lissajous">③ 리사주 공명</div>
+  <div class="tab" data-tab="summary">④ 시스템 요약</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PANEL 1: CYMATICS ═══════════════════════════════════════════════ -->
+<div class="panel active" id="panel-cymatics">
+  <div class="info-box" style="margin-bottom:20px">
+    <p>
+      <strong>키매틱스(Cymatics)</strong>란 진동수에 따라 모래/유체가 만들어내는 절대 대칭 패턴입니다.
+      Chladni 방정식 <code>sin(m·π·r)·cos(n·θ) + sin(n·π·r)·cos(m·θ)</code>를 픽셀 단위로 렌더링해
+      주파수 번호 <strong>m</strong>(방사 마디) · <strong>n</strong>(각도 마디)에 따라 완전히 다른 형상이 나타납니다.
+      <strong>선을 긋는 게 아니라, 진동장(振動場)이 스스로 완성된 문양을 그려냅니다.</strong>
+    </p>
+  </div>
+
+  <div class="section-title">주파수 프리셋 갤러리 (m, n 조합)</div>
+  <div class="mode-grid" id="cymatics-gallery"></div>
+
+  <div class="demo-area">
+    <div class="demo-row">
+      <div class="demo-canvas-wrap">
+        <canvas id="cym-main" width="280" height="280"></canvas>
+      </div>
+      <div class="controls">
+        <div class="ctrl-group">
+          <div class="ctrl-label">방사 마디수 m &nbsp;<span id="cym-m-val">3</span></div>
+          <input type="range" id="cym-m" min="1" max="9" value="3">
+        </div>
+        <div class="ctrl-group">
+          <div class="ctrl-label">각도 마디수 n &nbsp;<span id="cym-n-val">2</span></div>
+          <input type="range" id="cym-n" min="1" max="9" value="2">
+        </div>
+        <div class="ctrl-group">
+          <div class="ctrl-label">혼합 비율 β &nbsp;<span id="cym-b-val">0.60</span></div>
+          <input type="range" id="cym-b" min="0" max="100" value="60">
+        </div>
+        <div class="ctrl-group">
+          <div class="ctrl-label">팔레트</div>
+          <div class="ctrl-row">
+            <div class="pill active" data-pal="gold">황금</div>
+            <div class="pill" data-pal="plasma">플라즈마</div>
+            <div class="pill" data-pal="jade">비취</div>
+            <div class="pill" data-pal="crimson">진홍</div>
+            <div class="pill" data-pal="void">공(空)</div>
+          </div>
+        </div>
+        <div class="stage-clear">
+          <div class="stage-clear-title">스테이지 클리어 조건</div>
+          <div class="stage-clear-desc">
+            각 레벨마다 <strong style="color:#c8a84b">목표 주파수 (m_target, n_target)</strong>가 숨겨져 있습니다.<br>
+            슬라이더를 조작해 내 패턴을 목표 패턴과 <strong style="color:#c8a84b">80% 이상 일치</strong>시키면 클리어.<br>
+            픽셀 필드의 유사도를 실시간으로 계산해 진행 게이지에 반영합니다.<br>
+            <span style="color:#6a5a3a">→ 레벨이 높아질수록 목표 m·n 범위가 넓어져 더 복잡한 형상을 맞춰야 합니다.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PANEL 2: ROSE ═══════════════════════════════════════════════ -->
+<div class="panel" id="panel-rose">
+  <div class="info-box" style="margin-bottom:20px">
+    <p>
+      <strong>파라메트릭 장미(Rhodonea)</strong>: 극좌표 방정식 <code>r = cos(k·θ)</code>.
+      k가 홀수면 k개 꽃잎, 짝수면 2k개 꽃잎이 생깁니다.
+      여기서는 <strong>이중 장미</strong>(두 주파수 k₁, k₂의 합성)를 사용해 더 복잡한 문양을 만들고,
+      위상차 δ와 반경 변조 ε를 추가해 <strong>살아 움직이는 완전한 형상</strong>을 만듭니다.
+    </p>
+  </div>
+
+  <div class="section-title">k₁ · k₂ 프리셋 갤러리</div>
+  <div class="rose-grid" id="rose-gallery"></div>
+
+  <div class="demo-area">
+    <div class="demo-row">
+      <div class="demo-canvas-wrap">
+        <canvas id="rose-main" width="280" height="280"></canvas>
+      </div>
+      <div class="controls">
+        <div class="ctrl-group">
+          <div class="ctrl-label">주 꽃잎수 k₁ &nbsp;<span id="rose-k1-val">5</span></div>
+          <input type="range" id="rose-k1" min="1" max="12" value="5">
+        </div>
+        <div class="ctrl-group">
+          <div class="ctrl-label">부 꽃잎수 k₂ &nbsp;<span id="rose-k2-val">3</span></div>
+          <input type="range" id="rose-k2" min="1" max="12" value="3">
+        </div>
+        <div class="ctrl-group">
+          <div class="ctrl-label">위상차 δ (°) &nbsp;<span id="rose-d-val">0</span></div>
+          <input type="range" id="rose-d" min="0" max="360" value="0">
+        </div>
+        <div class="ctrl-group">
+          <div class="ctrl-label">반경 변조 ε &nbsp;<span id="rose-e-val">0.20</span></div>
+          <input type="range" id="rose-e" min="0" max="100" value="20">
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:14px">
+          <button class="animate-btn" id="rose-anim-btn">▶ 위상 애니메이션</button>
+        </div>
+        <div class="stage-clear">
+          <div class="stage-clear-title">스테이지 클리어 조건</div>
+          <div class="stage-clear-desc">
+            목표 꽃잎 패턴이 반투명하게 표시됩니다.<br>
+            k₁·k₂·δ를 맞춰 내 장미를 목표 위에 <strong style="color:#c8a84b">겹쳐 일치</strong>시키면 클리어.<br>
+            일치율이 높아질수록 목표 이미지가 점점 밝아지며 게이지가 채워집니다.<br>
+            <span style="color:#6a5a3a">→ 후반 레벨에서는 ε(변조)까지 맞춰야 해 더 섬세한 조작이 필요합니다.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PANEL 3: LISSAJOUS ═══════════════════════════════════════════════ -->
+<div class="panel" id="panel-lissajous">
+  <div class="info-box" style="margin-bottom:20px">
+    <p>
+      <strong>리사주 도형(Lissajous)</strong>: 두 주파수의 비 a:b와 위상차 δ로 결정되는 완전한 궤도 곡선.
+      <code>x = sin(a·t + δ), y = sin(b·t)</code>.
+      a:b가 간단한 유리수일 때 닫힌 완전한 형상이 만들어집니다.
+      여기서는 <strong>닫힌 비율만 허용</strong>해 항상 아름다운 완형(完形)을 보장합니다.
+    </p>
+  </div>
+
+  <div class="section-title">a:b 비율 프리셋 갤러리</div>
+  <div class="lissajous-grid" id="lissajous-gallery"></div>
+
+  <div class="demo-area">
+    <div class="demo-row">
+      <div class="demo-canvas-wrap">
+        <canvas id="liss-main" width="280" height="280"></canvas>
+      </div>
+      <div class="controls">
+        <div class="ctrl-group">
+          <div class="ctrl-label">주파수 비 a:b</div>
+          <div class="ctrl-row" id="liss-ratio-pills">
+            <div class="pill active" data-a="1" data-b="1">1:1</div>
+            <div class="pill" data-a="1" data-b="2">1:2</div>
+            <div class="pill" data-a="2" data-b="3">2:3</div>
+            <div class="pill" data-a="3" data-b="4">3:4</div>
+            <div class="pill" data-a="3" data-b="5">3:5</div>
+            <div class="pill" data-a="4" data-b="5">4:5</div>
+            <div class="pill" data-a="5" data-b="6">5:6</div>
+            <div class="pill" data-a="5" data-b="7">5:7</div>
+          </div>
+        </div>
+        <div class="ctrl-group">
+          <div class="ctrl-label">위상차 δ (°) &nbsp;<span id="liss-d-val">45</span></div>
+          <input type="range" id="liss-d" min="0" max="360" value="45">
+        </div>
+        <div class="ctrl-group">
+          <div class="ctrl-label">선 두께 &nbsp;<span id="liss-w-val">2</span></div>
+          <input type="range" id="liss-w" min="1" max="6" value="2">
+        </div>
+        <div class="ctrl-group">
+          <div class="ctrl-label">팔레트</div>
+          <div class="ctrl-row" id="liss-pal-pills">
+            <div class="pill active" data-lpal="gold">황금</div>
+            <div class="pill" data-lpal="plasma">플라즈마</div>
+            <div class="pill" data-lpal="jade">비취</div>
+            <div class="pill" data-lpal="crimson">진홍</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:14px">
+          <button class="animate-btn" id="liss-anim-btn">▶ δ 위상 스윕</button>
+        </div>
+        <div class="stage-clear">
+          <div class="stage-clear-title">스테이지 클리어 조건</div>
+          <div class="stage-clear-desc">
+            목표 a:b 비율과 δ값이 힌트로 주어집니다 (범위 표시).<br>
+            도형을 <strong style="color:#c8a84b">N회 완전히 추적</strong>하면 밝기와 게이지가 채워집니다.<br>
+            레벨마다 N이 증가하며 (L1=1회, L30=8회) 더 많은 추적이 필요합니다.<br>
+            <span style="color:#6a5a3a">→ 정확한 δ를 찾아야 아름다운 닫힌 형상이 완성됩니다.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ PANEL 4: SUMMARY ═══════════════════════════════════════════════ -->
+<div class="panel" id="panel-summary">
+  <div class="split">
+    <div>
+      <div class="section-title">세 시스템 비교</div>
+      <table style="width:100%;border-collapse:collapse;font-size:9px">
+        <tr style="border-bottom:1px solid #3a3020">
+          <th style="padding:8px 6px;color:#9a8a6a;text-align:left;text-transform:uppercase;letter-spacing:.15em">항목</th>
+          <th style="padding:8px 6px;color:#c8a84b;text-align:center">키매틱스</th>
+          <th style="padding:8px 6px;color:#d4c84b;text-align:center">파라메트릭 장미</th>
+          <th style="padding:8px 6px;color:#4bcacc;text-align:center">리사주</th>
+        </tr>
+        <tr style="border-bottom:1px solid #2a2010">
+          <td style="padding:7px 6px;color:#7a6a4a">완형 보장</td>
+          <td style="text-align:center">✦ 픽셀 필드</td>
+          <td style="text-align:center">✦ 닫힌 곡선</td>
+          <td style="text-align:center">✦ 닫힌 궤도</td>
+        </tr>
+        <tr style="border-bottom:1px solid #2a2010">
+          <td style="padding:7px 6px;color:#7a6a4a">진동수 직관성</td>
+          <td style="text-align:center">★★★★★</td>
+          <td style="text-align:center">★★★★☆</td>
+          <td style="text-align:center">★★★★★</td>
+        </tr>
+        <tr style="border-bottom:1px solid #2a2010">
+          <td style="padding:7px 6px;color:#7a6a4a">플레이어 조작</td>
+          <td style="text-align:center">슬라이더 탐색</td>
+          <td style="text-align:center">슬라이더 탐색</td>
+          <td style="text-align:center">비율 선택 + δ</td>
+        </tr>
+        <tr style="border-bottom:1px solid #2a2010">
+          <td style="padding:7px 6px;color:#7a6a4a">패턴 다양성</td>
+          <td style="text-align:center">81종 (m,n≤9)</td>
+          <td style="text-align:center">144종+ (k₁,k₂≤12)</td>
+          <td style="text-align:center">48종+ 위상차</td>
+        </tr>
+        <tr style="border-bottom:1px solid #2a2010">
+          <td style="padding:7px 6px;color:#7a6a4a">세계관 연결</td>
+          <td style="text-align:center">소리의 물질화</td>
+          <td style="text-align:center">자연의 수학</td>
+          <td style="text-align:center">우주적 공명</td>
+        </tr>
+        <tr>
+          <td style="padding:7px 6px;color:#7a6a4a">권장 레벨 배정</td>
+          <td style="text-align:center">Lv 11–20</td>
+          <td style="text-align:center">Lv 1–10</td>
+          <td style="text-align:center">Lv 21–30</td>
+        </tr>
+      </table>
+    </div>
+    <div>
+      <div class="section-title">레벨 구성 제안 (30 레벨)</div>
+      <div style="font-size:9px;line-height:1.9;color:#7a6a4a">
+        <div style="color:#d4c84b;margin-bottom:4px">▸ Lv 1–10 &nbsp;파라메트릭 장미 (입문)</div>
+        &nbsp;&nbsp;L1: k=3 (삼잎), L2: k=4, L3: k=5 (오망성)<br>
+        &nbsp;&nbsp;L4–6: 이중 k₁·k₂ 단순 조합<br>
+        &nbsp;&nbsp;L7–10: 위상차 δ 추가, ε 변조 포함<br>
+        <br>
+        <div style="color:#c8a84b;margin-bottom:4px">▸ Lv 11–20 &nbsp;키매틱스 주파수 (중급)</div>
+        &nbsp;&nbsp;L11–13: m=2,3,4 / n=1,2 (기본 마디)<br>
+        &nbsp;&nbsp;L14–17: m, n 범위 확장, β 혼합 추가<br>
+        &nbsp;&nbsp;L18–20: 고차 마디 (m·n ≥ 5) 복잡한 형상<br>
+        <br>
+        <div style="color:#4bcacc;margin-bottom:4px">▸ Lv 21–30 &nbsp;리사주 공명 (고급)</div>
+        &nbsp;&nbsp;L21–23: 1:2, 2:3 등 단순비<br>
+        &nbsp;&nbsp;L24–27: 3:5, 4:7 등 복잡비 + δ 탐색<br>
+        &nbsp;&nbsp;L28–30: 고차 비율, N=6–8회 추적<br>
+        <br>
+        <div style="color:#8a8a50;font-size:8px">
+          ※ 모든 시스템은 <strong style="color:#c8a84b">완성된 형상을 즉시 보여주고</strong>,<br>
+          &nbsp;&nbsp;&nbsp;플레이어는 '탐색·조율·일치'하는 방식으로 참여합니다.<br>
+          &nbsp;&nbsp;&nbsp;선을 직접 긋는 것이 아니라 <strong style="color:#c8a84b">주파수를 발견</strong>하는 게임입니다.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top:24px">
+    <div class="section-title">니닉 카드화 흐름 (30레벨 완주 후)</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;font-size:9px">
+      <div class="info-box">
+        <p><strong>1단계 — 시드 추출</strong><br>
+        완주한 레벨들에서 가장 높은 공명 점수를 받은 m, n, k, δ 값을 기록.<br>
+        이 값들이 플레이어 고유의 <strong>니닉 주파수 서명</strong>이 됩니다.</p>
+      </div>
+      <div class="info-box">
+        <p><strong>2단계 — 카드 생성</strong><br>
+        서명 값으로 세 패턴을 합성해 <strong>개인 만다라</strong>를 생성.<br>
+        캐릭터 의상 문양 / 사원 벽화 / 제단 테이블 그림 중 형태 선택.</p>
+      </div>
+      <div class="info-box">
+        <p><strong>3단계 — 점술 사용</strong><br>
+        메인스트림 선택지 장면에서 카드를 사용하면<br>
+        서명 주파수에 기반한 <strong>니닉의 신탁</strong>이 힌트로 제공됩니다.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════ PALETTE ═══════════════════
+function palColor(t, name) {
+  t = Math.max(0, Math.min(1, t));
+  switch(name) {
+    case 'gold': {
+      if (t < 0.5) {
+        const s = t*2;
+        return [Math.round(s*30), Math.round(s*20), Math.round(s*8)];
+      } else {
+        const s = (t-0.5)*2;
+        return [Math.round(30+s*200), Math.round(20+s*180), Math.round(8+s*60)];
+      }
+    }
+    case 'plasma': {
+      const r = Math.sin(t*Math.PI)*255;
+      const g = Math.sin(t*Math.PI+2.09)*127+127;
+      const b = Math.cos(t*Math.PI)*127+127;
+      return [Math.round(r), Math.round(g), Math.round(b)];
+    }
+    case 'jade': {
+      return [Math.round(t*40), Math.round(60+t*160), Math.round(t*120)];
+    }
+    case 'crimson': {
+      return [Math.round(60+t*180), Math.round(t*40), Math.round(t*30)];
+    }
+    case 'void': {
+      const v = Math.round(t*240);
+      return [v, v, Math.round(v*1.1)];
+    }
+    default: return [Math.round(t*200), Math.round(t*180), Math.round(t*80)];
+  }
+}
+
+// ═══════════════════ CYMATICS RENDERER ═══════════════════
+function renderCymatics(canvas, m, n, beta, palName, alpha=1) {
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W/2, cy = H/2;
+  const R = Math.min(cx, cy) - 2;
+  const img = ctx.createImageData(W, H);
+  const d = img.data;
+  for (let py=0; py<H; py++) {
+    for (let px=0; px<W; px++) {
+      const dx=px-cx, dy=py-cy;
+      const r = Math.sqrt(dx*dx+dy*dy)/R;
+      const i4 = (py*W+px)*4;
+      if (r >= 1) { d[i4+3]=0; continue; }
+      const theta = Math.atan2(dy, dx);
+      const v1 = Math.sin(m*Math.PI*r) * Math.cos(n*theta);
+      const v2 = Math.sin(n*Math.PI*r) * Math.cos(m*theta);
+      let v = (v1 + v2*beta) / (1+beta);
+      v = (v+1)/2;
+      const [cr,cg,cb] = palColor(v, palName);
+      const edgeA = Math.min(1, (1-r)*12);
+      d[i4]=cr; d[i4+1]=cg; d[i4+2]=cb;
+      d[i4+3] = Math.round(edgeA * alpha * 255);
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+}
+
+// ═══════════════════ ROSE RENDERER ═══════════════════
+function renderRose(canvas, k1, k2, delta, epsilon, palName, alpha=1) {
+  const ctx = canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const cx=W/2, cy=H/2;
+  const R = Math.min(cx,cy)-4;
+  const steps = 4000;
+  const dRad = delta * Math.PI/180;
+  ctx.lineWidth = canvas.width > 100 ? 1.5 : 1;
+  ctx.lineCap = 'round';
+  for (let s=0; s<steps; s++) {
+    const t = s/steps * Math.PI*2*(k1%2===0?2:1)*(k2%2===0?2:1);
+    const r1 = Math.cos(k1*t);
+    const r2 = Math.cos(k2*(t+dRad));
+    const r = (r1 + r2*epsilon) / (1+epsilon);
+    const x = cx + r*R*Math.cos(t);
+    const y = cy + r*R*Math.sin(t);
+    const hue = s/steps;
+    const [cr,cg,cb] = palColor(hue, palName);
+    ctx.strokeStyle = `rgba(${cr},${cg},${cb},${alpha*0.8})`;
+    if (s===0) { ctx.beginPath(); ctx.moveTo(x,y); }
+    else ctx.lineTo(x,y);
+    if (s%200===0) { ctx.stroke(); ctx.beginPath(); ctx.moveTo(x,y); }
+  }
+  ctx.stroke();
+}
+
+// ═══════════════════ LISSAJOUS RENDERER ═══════════════════
+function renderLissajous(canvas, a, b, delta, lineWidth, palName, alpha=1) {
+  const ctx = canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  const cx=W/2, cy=H/2;
+  const R = Math.min(cx,cy)-6;
+  const dRad = delta * Math.PI/180;
+  const lcm = (x,y) => { const g=(a,b)=>b?g(b,a%b):a; return x*y/g(x,y); };
+  const period = lcm(a,b)*2*Math.PI;
+  const steps = Math.max(2000, period*200);
+  ctx.lineWidth = lineWidth;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  for (let s=0; s<steps; s++) {
+    const t = s/steps * period;
+    const x = cx + R * Math.sin(a*t + dRad);
+    const y = cy + R * Math.sin(b*t);
+    const hue = (Math.sin(a*t)+1)/2;
+    const [cr,cg,cb] = palColor(hue, palName);
+    ctx.strokeStyle = `rgba(${cr},${cg},${cb},${alpha*0.85})`;
+    if (s===0) { ctx.beginPath(); ctx.moveTo(x,y); }
+    else ctx.lineTo(x,y);
+    if (s%300===0) { ctx.stroke(); ctx.beginPath(); ctx.moveTo(x,y); }
+  }
+  ctx.stroke();
+}
+
+// ═══════════════════ CYMATICS GALLERY ═══════════════════
+const cymPresets = [
+  {m:1,n:1,label:'(1,1)'},{m:2,n:1,label:'(2,1)'},{m:2,n:2,label:'(2,2)'},
+  {m:3,n:1,label:'(3,1)'},{m:3,n:2,label:'(3,2)'},{m:3,n:3,label:'(3,3)'},
+  {m:4,n:1,label:'(4,1)'},{m:4,n:3,label:'(4,3)'},{m:5,n:2,label:'(5,2)'},
+  {m:5,n:4,label:'(5,4)'},{m:6,n:1,label:'(6,1)'},{m:7,n:3,label:'(7,3)'},
+];
+let cymPal = 'gold';
+let cymM=3, cymN=2, cymB=0.60;
+
+function buildCymaticsGallery() {
+  const g = document.getElementById('cymatics-gallery');
+  cymPresets.forEach((p,i) => {
+    const card = document.createElement('div');
+    card.className = 'mode-card' + (i===4?' selected':'');
+    const cv = document.createElement('canvas');
+    cv.width=80; cv.height=80;
+    renderCymatics(cv, p.m, p.n, 0.6, cymPal);
+    const h3 = document.createElement('h3'); h3.textContent=p.label;
+    const pp = document.createElement('p'); pp.textContent=`m=${p.m}, n=${p.n}`;
+    card.append(cv,h3,pp);
+    card.addEventListener('click', ()=>{
+      document.querySelectorAll('#cymatics-gallery .mode-card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      cymM=p.m; cymN=p.n;
+      document.getElementById('cym-m').value=p.m;
+      document.getElementById('cym-n').value=p.n;
+      document.getElementById('cym-m-val').textContent=p.m;
+      document.getElementById('cym-n-val').textContent=p.n;
+      updateCymatics();
+    });
+    g.appendChild(card);
+  });
+}
+
+function updateCymatics() {
+  const cv = document.getElementById('cym-main');
+  renderCymatics(cv, cymM, cymN, cymB, cymPal);
+}
+
+// ═══════════════════ ROSE GALLERY ═══════════════════
+const rosePresets = [
+  {k1:3,k2:0,d:0,e:0,label:'k=3'},{k1:4,k2:0,d:0,e:0,label:'k=4'},{k1:5,k2:0,d:0,e:0,label:'k=5'},
+  {k1:7,k2:0,d:0,e:0,label:'k=7'},{k1:8,k2:0,d:0,e:0,label:'k=8'},
+  {k1:3,k2:5,d:0,e:0.3,label:'3+5'},{k1:4,k2:7,d:30,e:0.4,label:'4+7'},{k1:5,k2:8,d:45,e:0.3,label:'5+8'},
+  {k1:3,k2:4,d:90,e:0.5,label:'3+4δ'},{k1:6,k2:5,d:60,e:0.3,label:'6+5δ'},
+];
+let rosePal='gold', roseK1=5, roseK2=3, roseDelta=0, roseEps=0.2;
+let roseAnimId=null, roseAnimPhase=0;
+
+function buildRoseGallery() {
+  const g = document.getElementById('rose-gallery');
+  rosePresets.forEach((p,i) => {
+    const card = document.createElement('div');
+    card.className = 'rose-card' + (i===5?' selected':'');
+    const cv = document.createElement('canvas');
+    cv.width=70; cv.height=70;
+    renderRose(cv, p.k1, p.k2||1, p.d, p.e, 'gold');
+    const pp = document.createElement('p'); pp.textContent=p.label;
+    card.append(cv,pp);
+    card.addEventListener('click', ()=>{
+      document.querySelectorAll('#rose-gallery .rose-card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      roseK1=p.k1; roseK2=p.k2||1; roseDelta=p.d; roseEps=p.e;
+      document.getElementById('rose-k1').value=p.k1;
+      document.getElementById('rose-k2').value=p.k2||1;
+      document.getElementById('rose-d').value=p.d;
+      document.getElementById('rose-e').value=Math.round(p.e*100);
+      document.getElementById('rose-k1-val').textContent=p.k1;
+      document.getElementById('rose-k2-val').textContent=p.k2||1;
+      document.getElementById('rose-d-val').textContent=p.d;
+      document.getElementById('rose-e-val').textContent=p.e.toFixed(2);
+      updateRose();
+    });
+    g.appendChild(card);
+  });
+}
+
+function updateRose() {
+  const cv = document.getElementById('rose-main');
+  renderRose(cv, roseK1, roseK2, roseDelta, roseEps, rosePal);
+}
+
+// ═══════════════════ LISSAJOUS GALLERY ═══════════════════
+const lissPresets = [
+  {a:1,b:1,d:90,label:'1:1'},
+  {a:1,b:2,d:45,label:'1:2'},
+  {a:2,b:3,d:45,label:'2:3'},
+  {a:3,b:4,d:45,label:'3:4'},
+  {a:3,b:5,d:30,label:'3:5'},
+  {a:4,b:5,d:60,label:'4:5'},
+  {a:5,b:6,d:45,label:'5:6'},
+  {a:5,b:7,d:45,label:'5:7'},
+];
+let lissPal='gold', lissA=2, lissB=3, lissDelta=45, lissW=2;
+let lissAnimId=null;
+
+function buildLissajousGallery() {
+  const g = document.getElementById('lissajous-gallery');
+  lissPresets.forEach((p,i) => {
+    const card = document.createElement('div');
+    card.className = 'liss-card' + (i===2?' selected':'');
+    const cv = document.createElement('canvas');
+    cv.width=80; cv.height=80;
+    renderLissajous(cv, p.a, p.b, p.d, 1, 'gold');
+    const pp = document.createElement('p'); pp.textContent=p.label;
+    card.append(cv,pp);
+    card.addEventListener('click', ()=>{
+      document.querySelectorAll('#lissajous-gallery .liss-card').forEach(c=>c.classList.remove('selected'));
+      card.classList.add('selected');
+      lissA=p.a; lissB=p.b; lissDelta=p.d;
+      document.getElementById('liss-d').value=p.d;
+      document.getElementById('liss-d-val').textContent=p.d;
+      document.querySelectorAll('#liss-ratio-pills .pill').forEach(pl=>{
+        pl.classList.toggle('active', parseInt(pl.dataset.a)===p.a && parseInt(pl.dataset.b)===p.b);
+      });
+      updateLissajous();
+    });
+    g.appendChild(card);
+  });
+}
+
+function updateLissajous() {
+  const cv = document.getElementById('liss-main');
+  renderLissajous(cv, lissA, lissB, lissDelta, lissW, lissPal);
+}
+
+// ═══════════════════ INIT CONTROLS ═══════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  // Tabs
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-'+tab.dataset.tab).classList.add('active');
+    });
+  });
+
+  // Build galleries
+  buildCymaticsGallery();
+  buildRoseGallery();
+  buildLissajousGallery();
+
+  // ─── Cymatics controls ───
+  updateCymatics();
+  document.getElementById('cym-m').addEventListener('input', e=>{
+    cymM=parseInt(e.target.value);
+    document.getElementById('cym-m-val').textContent=cymM;
+    updateCymatics();
+  });
+  document.getElementById('cym-n').addEventListener('input', e=>{
+    cymN=parseInt(e.target.value);
+    document.getElementById('cym-n-val').textContent=cymN;
+    updateCymatics();
+  });
+  document.getElementById('cym-b').addEventListener('input', e=>{
+    cymB=parseInt(e.target.value)/100;
+    document.getElementById('cym-b-val').textContent=cymB.toFixed(2);
+    updateCymatics();
+  });
+  document.querySelectorAll('[data-pal]').forEach(pill => {
+    pill.addEventListener('click', ()=>{
+      document.querySelectorAll('[data-pal]').forEach(p=>p.classList.remove('active'));
+      pill.classList.add('active');
+      cymPal=pill.dataset.pal;
+      updateCymatics();
+      document.querySelectorAll('#cymatics-gallery .mode-card canvas').forEach((cv,i)=>{
+        renderCymatics(cv, cymPresets[i].m, cymPresets[i].n, 0.6, cymPal);
+      });
+    });
+  });
+
+  // ─── Rose controls ───
+  updateRose();
+  document.getElementById('rose-k1').addEventListener('input', e=>{
+    roseK1=parseInt(e.target.value);
+    document.getElementById('rose-k1-val').textContent=roseK1;
+    updateRose();
+  });
+  document.getElementById('rose-k2').addEventListener('input', e=>{
+    roseK2=parseInt(e.target.value);
+    document.getElementById('rose-k2-val').textContent=roseK2;
+    updateRose();
+  });
+  document.getElementById('rose-d').addEventListener('input', e=>{
+    roseDelta=parseInt(e.target.value);
+    document.getElementById('rose-d-val').textContent=roseDelta;
+    updateRose();
+  });
+  document.getElementById('rose-e').addEventListener('input', e=>{
+    roseEps=parseInt(e.target.value)/100;
+    document.getElementById('rose-e-val').textContent=roseEps.toFixed(2);
+    updateRose();
+  });
+  document.getElementById('rose-anim-btn').addEventListener('click', ()=>{
+    const btn=document.getElementById('rose-anim-btn');
+    if (roseAnimId) {
+      cancelAnimationFrame(roseAnimId); roseAnimId=null;
+      btn.textContent='▶ 위상 애니메이션'; btn.classList.remove('running');
+    } else {
+      btn.textContent='■ 정지'; btn.classList.add('running');
+      function loop() {
+        roseDelta = (roseDelta+0.5) % 360;
+        document.getElementById('rose-d').value=roseDelta;
+        document.getElementById('rose-d-val').textContent=Math.round(roseDelta);
+        updateRose();
+        roseAnimId=requestAnimationFrame(loop);
+      }
+      roseAnimId=requestAnimationFrame(loop);
+    }
+  });
+
+  // ─── Lissajous controls ───
+  updateLissajous();
+  document.querySelectorAll('#liss-ratio-pills .pill').forEach(pill => {
+    pill.addEventListener('click', ()=>{
+      document.querySelectorAll('#liss-ratio-pills .pill').forEach(p=>p.classList.remove('active'));
+      pill.classList.add('active');
+      lissA=parseInt(pill.dataset.a); lissB=parseInt(pill.dataset.b);
+      updateLissajous();
+    });
+  });
+  document.getElementById('liss-d').addEventListener('input', e=>{
+    lissDelta=parseInt(e.target.value);
+    document.getElementById('liss-d-val').textContent=lissDelta;
+    updateLissajous();
+  });
+  document.getElementById('liss-w').addEventListener('input', e=>{
+    lissW=parseInt(e.target.value);
+    document.getElementById('liss-w-val').textContent=lissW;
+    updateLissajous();
+  });
+  document.querySelectorAll('[data-lpal]').forEach(pill => {
+    pill.addEventListener('click', ()=>{
+      document.querySelectorAll('[data-lpal]').forEach(p=>p.classList.remove('active'));
+      pill.classList.add('active');
+      lissPal=pill.dataset.lpal;
+      updateLissajous();
+    });
+  });
+  document.getElementById('liss-anim-btn').addEventListener('click', ()=>{
+    const btn=document.getElementById('liss-anim-btn');
+    if (lissAnimId) {
+      cancelAnimationFrame(lissAnimId); lissAnimId=null;
+      btn.textContent='▶ δ 위상 스윕'; btn.classList.remove('running');
+    } else {
+      btn.textContent='■ 정지'; btn.classList.add('running');
+      function loop() {
+        lissDelta = (lissDelta+0.8) % 360;
+        document.getElementById('liss-d').value=lissDelta;
+        document.getElementById('liss-d-val').textContent=Math.round(lissDelta);
+        updateLissajous();
+        lissAnimId=requestAnimationFrame(loop);
+      }
+      lissAnimId=requestAnimationFrame(loop);
+    }
+  });
+});
+</script>
+</body>
+</html>

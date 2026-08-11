@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { WordEntry, addWordEntry, updateWordEntry, VisualBlock } from '@/lib/dictionary-data';
+import { WordEntry, addWordEntry, updateWordEntry, VisualBlock, DICTIONARY_NOVELS } from '@/lib/dictionary-data';
 import { Sparkles, Edit2, Trash2, Plus, Lock } from 'lucide-react';
 import { Pagination } from './Pagination';
 
@@ -21,6 +21,8 @@ export const DictionaryManager: React.FC<DictionaryManagerProps> = ({
     const [editingId, setEditingId] = useState<string | null>(null);
     const [word, setWord] = useState('');
     const [category, setCategory] = useState('순수어');
+    const [wordMarks, setWordMarks] = useState('○');
+    const [novels, setNovels] = useState<string[]>([]);
     const [description, setDescription] = useState('');
     const [imagePrompt, setImagePrompt] = useState('');
     const [visualBlocks, setVisualBlocks] = useState<VisualBlock[]>([]);
@@ -35,10 +37,10 @@ export const DictionaryManager: React.FC<DictionaryManagerProps> = ({
 
         try {
             if (editingId) {
-                await updateWordEntry(editingId, { word, category, description, imagePrompt, visualBlocks, isKraft });
+                await updateWordEntry(editingId, { word, category, novels, wordMarks, description, imagePrompt, visualBlocks, isKraft });
                 setStatus('Updated successfully!');
             } else {
-                await addWordEntry({ word, category, description, imagePrompt, visualBlocks, isKraft });
+                await addWordEntry({ word, category, novels, wordMarks, description, imagePrompt, visualBlocks, isKraft });
                 setStatus('Added successfully!');
             }
 
@@ -58,6 +60,8 @@ export const DictionaryManager: React.FC<DictionaryManagerProps> = ({
     const resetForm = () => {
         setWord('');
         setCategory('순수어');
+        setWordMarks('○');
+        setNovels([]);
         setDescription('');
         setImagePrompt('');
         setVisualBlocks([]);
@@ -69,6 +73,8 @@ export const DictionaryManager: React.FC<DictionaryManagerProps> = ({
         setEditingId(entry.id);
         setWord(entry.word);
         setCategory(entry.category);
+        setWordMarks(entry.wordMarks || '');
+        setNovels(entry.novels || []);
         setDescription(entry.description);
         setImagePrompt(entry.imagePrompt);
         setVisualBlocks(entry.visualBlocks || []);
@@ -248,18 +254,77 @@ export const DictionaryManager: React.FC<DictionaryManagerProps> = ({
                         <select
                             className="admin-input"
                             value={category}
-                            onChange={(e) => setCategory(e.target.value)}
+                            onChange={(e) => {
+                                const nextCategory = e.target.value;
+                                setCategory(nextCategory);
+                                if (wordMarks.length <= 1) {
+                                    setWordMarks(
+                                        nextCategory === '차용어'
+                                            ? '●'
+                                            : nextCategory === '순수어'
+                                                ? '○'
+                                                : nextCategory === '합성어'
+                                                    ? '◉'
+                                                    : ''
+                                    );
+                                }
+                            }}
                         >
                             <option>순수어</option>
-                            <option>기존어</option>
+                            <option>차용어</option>
                             <option>합성어</option>
-                            <option>청록전쟁편수록</option>
                             <option>천개의문</option>
                             <option>생물</option>
                             <option>반생물</option>
                             <option>지명</option>
                             <option>캐릭터</option>
                         </select>
+                    </div>
+
+                    <div className="form-group">
+                        <label>어원 표기</label>
+                        <input
+                            type="text"
+                            className="admin-input"
+                            value={wordMarks}
+                            maxLength={2}
+                            onChange={(event) => {
+                                setWordMarks(event.target.value.replace(/[^●○◉]/g, ''));
+                            }}
+                            placeholder="예: ○●"
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label>소설별 보기</label>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.55rem' }}>
+                            {DICTIONARY_NOVELS.map((novel) => (
+                                <label
+                                    key={novel}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.4rem',
+                                        padding: '0.5rem 0.65rem',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        cursor: 'pointer'
+                                    }}
+                                >
+                                    <input
+                                        type="checkbox"
+                                        checked={novels.includes(novel)}
+                                        onChange={() => {
+                                            setNovels(current =>
+                                                current.includes(novel)
+                                                    ? current.filter(item => item !== novel)
+                                                    : [...current, novel]
+                                            );
+                                        }}
+                                    />
+                                    {novel}
+                                </label>
+                            ))}
+                        </div>
                     </div>
 
                     <div className="form-group">
@@ -494,6 +559,7 @@ export const DictionaryManager: React.FC<DictionaryManagerProps> = ({
                             <div>
                                 <span style={{ fontWeight: '500' }}>{entry.word}</span>
                                 <span style={{ marginLeft: '0.5rem', fontSize: '0.8rem', color: '#333' }}>#{entry.indexNumber}</span>
+                                <span style={{ marginLeft: '0.5rem', fontSize: '0.8rem', color: '#666' }}>{entry.wordMarks || '미분류'}</span>
                                 <span style={{ marginLeft: '1rem', fontSize: '0.8rem', color: '#555' }}>{entry.category}</span>
                                 {entry.isKraft && (
                                     <span style={{ marginLeft: '1rem', fontSize: '0.6rem', background: '#333', color: '#888', padding: '0.2rem 0.5rem', letterSpacing: '0.1em' }}>KRAFT</span>

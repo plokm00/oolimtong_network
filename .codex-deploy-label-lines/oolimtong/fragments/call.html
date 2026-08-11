@@ -1,0 +1,96 @@
+<div class="call-container">
+    <!-- 배경 효과 -->
+    <div class="bg-particles" id="particles"></div>
+    <div class="bg-glow"></div>
+
+    <!-- 시작 화면 -->
+    <div class="call-screen active" id="screen-intro">
+        <div class="intro-content">
+            <div class="symbol-container">
+                <div class="oolimtong-symbol"></div>
+                <div class="symbol-rings">
+                    <div class="ring ring-1"></div>
+                    <div class="ring ring-2"></div>
+                    <div class="ring ring-3"></div>
+                </div>
+            </div>
+
+            <h1 class="title">울림통</h1>
+            <p class="subtitle">공명 네트워크</p>
+
+            <p class="intro-text">
+                현실의 틈에서<br>
+                당신을 부르는 소리가 들립니다
+            </p>
+
+            <button class="enter-btn" id="enter-btn">
+                <span class="btn-glow"></span>
+                <span class="btn-text">응답하기</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 소환 진행 화면 -->
+    <div class="call-screen" id="screen-summoning">
+        <div class="summoning-content">
+            <div class="summoning-circle">
+                <div class="circle-outer"></div>
+                <div class="circle-inner"></div>
+                <div class="circle-core"></div>
+            </div>
+
+            <p class="summoning-text" id="summoning-text">연결 중...</p>
+
+            <div class="summoning-progress">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 이름 부여 화면 -->
+    <div class="call-screen" id="screen-naming">
+        <div class="naming-content">
+            <p class="naming-intro">당신은 선택되었습니다</p>
+
+            <div class="name-reveal">
+                <div class="name-glow"></div>
+                <h2 class="ninnik-name" id="ninnik-name"></h2>
+                <p class="serial-number" id="serial-number"></p>
+            </div>
+
+            <p class="naming-desc">
+                이제부터 당신은 울림통의 수행자입니다.<br>
+                신화의 실마리를 찾아 여정을 시작하세요.
+            </p>
+
+            <button class="accept-btn" id="accept-btn">
+                <span>이름을 받아들이다</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- 완료 화면 -->
+    <div class="call-screen" id="screen-complete">
+        <div class="complete-content">
+            <div class="complete-icon">✧</div>
+
+            <h2 class="complete-title">소환 완료</h2>
+
+            <div class="user-card">
+                <div class="card-header">공명 네트워크 수행자 증명</div>
+                <div class="card-name" id="card-name"></div>
+                <div class="card-number" id="card-number"></div>
+                <div class="card-date" id="card-date"></div>
+            </div>
+
+            <p class="next-step">
+                다음 단계: 의례 학습<br>
+                <small>부적을 모아 울림통의 위치를 해제하세요</small>
+            </p>
+
+            <button class="continue-btn" id="continue-btn">
+                수행 시작하기
+            </button>
+        </div>
+    </div>
+</div>

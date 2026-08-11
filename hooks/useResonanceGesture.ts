@@ -16,9 +16,24 @@ interface ResonanceGestureConfig {
         shake?: number;
         pinch?: number;
         mouseSwipe?: number;
+        touchSwipe?: number;
         traceMinDistance?: number;
     };
 }
+
+const shouldIgnoreGestureTarget = (target: EventTarget | null) => {
+    if (!(target instanceof Element)) return false;
+
+    if (target.closest('[data-resonance-gesture="allow"]')) {
+        return false;
+    }
+
+    return Boolean(
+        target.closest(
+            '.modal-overlay, input, textarea, select, button, a, iframe, [contenteditable="true"], [data-resonance-gesture="ignore"]'
+        )
+    );
+};
 
 export const useResonanceGesture = ({
     onTrigger,
@@ -29,11 +44,13 @@ export const useResonanceGesture = ({
     const SHAKE_THRESHOLD = thresholds.shake || 12;
     const PINCH_THRESHOLD = thresholds.pinch || 80;
     const MOUSE_SWIPE_THRESHOLD = thresholds.mouseSwipe || 300;
+    const TOUCH_SWIPE_THRESHOLD = thresholds.touchSwipe || 110;
     const TRACE_MIN_DISTANCE = thresholds.traceMinDistance || 10;
 
     const pointsRef = useRef<Point[]>([]);
     const [needsPermission, setNeedsPermission] = useState(false);
     const [permissionGranted, setPermissionGranted] = useState(false);
+    const suppressClickUntilRef = useRef(0);
 
     // -------------------------------------------------------------------------
     // 1. Shake Detection (DeviceMotion)
@@ -84,11 +101,22 @@ export const useResonanceGesture = ({
     // 2. Touch Handlers (Pinch & Swipe)
     // -------------------------------------------------------------------------
     const initialPinchDistanceRef = useRef<number | null>(null);
+    const touchStartRef = useRef<Point | null>(null);
 
     const handleTouchStart = useCallback((e: React.TouchEvent) => {
+        if (shouldIgnoreGestureTarget(e.target)) {
+            pointsRef.current = [];
+            touchStartRef.current = null;
+            initialPinchDistanceRef.current = null;
+            return;
+        }
+
         if (e.touches.length === 1) {
-            pointsRef.current = [{ x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() }];
+            const start = { x: e.touches[0].clientX, y: e.touches[0].clientY, t: Date.now() };
+            pointsRef.current = [start];
+            touchStartRef.current = start;
         } else if (e.touches.length === 2) {
+            touchStartRef.current = null;
             const dx = e.touches[0].clientX - e.touches[1].clientX;
             const dy = e.touches[0].clientY - e.touches[1].clientY;
             initialPinchDistanceRef.current = Math.sqrt(dx * dx + dy * dy);
@@ -120,12 +148,25 @@ export const useResonanceGesture = ({
         }
     }, [onTrace, onTrigger, PINCH_THRESHOLD, TRACE_MIN_DISTANCE]);
 
-    const handleTouchEnd = useCallback(() => {
+    const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+        const start = touchStartRef.current;
+        const end = e.changedTouches[0];
+        if (start && end) {
+            const dx = end.clientX - start.x;
+            const dy = end.clientY - start.y;
+            if (
+                Math.abs(dx) >= TOUCH_SWIPE_THRESHOLD &&
+                Math.abs(dx) > Math.abs(dy) * 1.25
+            ) {
+                suppressClickUntilRef.current = Date.now() + 700;
+                onTrigger();
+            }
+        }
+
+        touchStartRef.current = null;
         initialPinchDistanceRef.current = null;
-        // Optionally clear points here if needed, but keeping them allows "continuation" if wanted.
-        // Usually safe to clear for visual cleanliness if it was stateful, 
-        // but here we just append to ref. logic handles single touch stream well.
-    }, []);
+        pointsRef.current = [];
+    }, [onTrigger, TOUCH_SWIPE_THRESHOLD]);
 
     // -------------------------------------------------------------------------
     // 3. Mouse Handlers (PC Swipe)
@@ -135,6 +176,13 @@ export const useResonanceGesture = ({
     const mouseSwipeDistanceRef = useRef(0);
 
     const handleMouseDown = useCallback((e: React.MouseEvent) => {
+        if (shouldIgnoreGestureTarget(e.target)) {
+            isMouseDownRef.current = false;
+            lastMousePosRef.current = null;
+            mouseSwipeDistanceRef.current = 0;
+            return;
+        }
+
         isMouseDownRef.current = true;
         lastMousePosRef.current = { x: e.clientX, y: e.clientY, t: Date.now() };
         mouseSwipeDistanceRef.current = 0;
@@ -158,12 +206,21 @@ export const useResonanceGesture = ({
 
     const handleMouseUp = useCallback(() => {
         if (mouseSwipeDistanceRef.current > MOUSE_SWIPE_THRESHOLD) {
+            suppressClickUntilRef.current = Date.now() + 350;
             onTrigger();
         }
         isMouseDownRef.current = false;
         lastMousePosRef.current = null;
         mouseSwipeDistanceRef.current = 0;
     }, [onTrigger, MOUSE_SWIPE_THRESHOLD]);
+
+    const handleClickCapture = useCallback((e: React.MouseEvent) => {
+        if (Date.now() > suppressClickUntilRef.current) return;
+
+        e.preventDefault();
+        e.stopPropagation();
+        suppressClickUntilRef.current = 0;
+    }, []);
 
     return {
         handlers: {
@@ -173,7 +230,8 @@ export const useResonanceGesture = ({
             onMouseDown: handleMouseDown,
             onMouseMove: handleMouseMove,
             onMouseUp: handleMouseUp,
-            onMouseLeave: handleMouseUp
+            onMouseLeave: handleMouseUp,
+            onClickCapture: handleClickCapture
         },
         permission: {
             needed: needsPermission,

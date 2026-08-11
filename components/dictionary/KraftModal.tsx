@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { WordEntry, VisualBlock } from '@/lib/dictionary-data';
 import { X } from 'lucide-react';
+import { lockBodyScroll, unlockBodyScroll } from '@/lib/scroll-lock';
 
 interface KraftModalProps {
     block: { block: VisualBlock; word: string } | null;
@@ -13,13 +14,14 @@ export default function KraftModal({ block, onClose }: KraftModalProps) {
     const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
-        if (block) {
-            setIsVisible(true);
-            document.body.style.overflow = 'hidden';
-        } else {
+        if (!block) {
             setIsVisible(false);
-            document.body.style.overflow = 'auto';
+            return;
         }
+
+        setIsVisible(true);
+        lockBodyScroll();
+        return unlockBodyScroll;
     }, [block]);
 
     if (!block) return null;

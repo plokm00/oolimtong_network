@@ -156,6 +156,19 @@
   }
 }
 
+/* Always reserve the page scrollbar's track. Without this the layout
+   slides sideways the moment content grows past one screen — and again
+   whenever a modal locks body scrolling and takes the scrollbar away. */
+html {
+  scrollbar-gutter: stable;
+}
+
+/* Chrome only honours root-scrollbar sizing off html/body, not the
+   bare ::-webkit-scrollbar above, so the reserved gutter stays thin. */
+html::-webkit-scrollbar {
+  width: 4px;
+}
+
 /* Utility to completely hide scrollbars where requested */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;

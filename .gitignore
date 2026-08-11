@@ -27,3 +27,24 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+.env*
+
+# local-only working material (source archives, not part of the site build)
+/artifacts/
+/vr360_batch_converter/
+
+# local tooling config
+/.claude/settings.local.json
+/.agents/
+.codex-coordinate-dev.*.log
+
+# superseded artwork originals: kept locally, not referenced by the app
+# (replaced by public/artworks/archive/*, see lib/artwork-data.ts)
+/public/artworks/ark-figureheads.jpg
+/public/artworks/doongara-tower-01.jpg
+/public/artworks/doongara-tower-02.jpg
+/public/artworks/joryong-restoration.jpg
+/public/artworks/palette-jupiter.jpg
+/public/artworks/palette-satellite.jpg
+/public/artworks/recovery-ceremony-01.jpg

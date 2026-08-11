@@ -1,0 +1,26 @@
+# local-only working folders (not part of the site build)
+artifacts/
+vr360_batch_converter/
+oolimtong/
+scripts/
+characters/
+.agents/
+.claude/
+.pnpm-store/
+
+# build output / deps (rebuilt on Vercel)
+node_modules/
+.next/
+*.tsbuildinfo
+
+# local env files (env vars are configured in the Vercel project)
+.env
+.env.*
+!.env.example
+
+# stray static prototypes at repo root
+design-proposals.html
+design-proposals-v3.html
+index.html
+style.css
+script.js
