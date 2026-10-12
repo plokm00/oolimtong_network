@@ -952,6 +952,132 @@ body {
   transform: scale(1.04);
 }
 
+/* Quiet, thumbnail-ready node scene. */
+.dictionary-container.is-immersive-pebble-view {
+  background: radial-gradient(ellipse 62% 52% at 50% 45%, #171b24 0%, #080a0e 76%);
+}
+
+.dictionary-pebble-exit,
+.dictionary-pebble-next {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.62rem;
+  min-height: 2.7rem;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid rgba(240, 245, 251, 0.19);
+  border-radius: 0.8rem;
+  background: rgba(30, 35, 44, 0.82);
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.16);
+  color: #f2f5f8;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+}
+
+.dictionary-pebble-exit {
+  top: max(1rem, env(safe-area-inset-top));
+  left: max(1rem, env(safe-area-inset-left));
+  right: auto;
+}
+
+.dictionary-pebble-exit:hover,
+.dictionary-pebble-next:hover {
+  border-color: rgba(245, 248, 252, 0.48);
+  background: rgba(48, 55, 66, 0.96);
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.dictionary-pebble-exit:focus-visible,
+.dictionary-pebble-next:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.dictionary-pebble-pagination {
+  position: fixed;
+  z-index: 100;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.dictionary-pebble-page-count {
+  color: rgba(241, 245, 249, 0.58);
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.13em;
+}
+
+.dictionary-node-network {
+  opacity: 1;
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+.dictionary-floating-pebble {
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: #e4eaf0;
+  box-shadow: 0 0.2rem 0.55rem rgba(0, 0, 0, 0.22);
+  animation: none;
+  transform: translate(-50%, -50%) rotate(var(--pebble-rotation));
+  transition: opacity 0.18s ease, transform 0.22s ease, box-shadow 0.22s ease;
+}
+
+.dictionary-floating-pebble::before {
+  content: none;
+}
+
+.dictionary-floating-pebble::after {
+  border-color: rgba(255, 255, 255, 0.16);
+  border-radius: 0.4rem;
+  background: rgba(22, 27, 35, 0.94);
+  color: #f4f6f8;
+}
+
+.dictionary-floating-pebble.has-media {
+  background: #d8dfe5;
+  overflow: visible;
+}
+
+.dictionary-floating-pebble img {
+  display: block;
+  filter: none;
+  transition: none;
+}
+
+.dictionary-floating-pebble:hover,
+.dictionary-floating-pebble:focus-visible {
+  z-index: 2000;
+  opacity: 1;
+  filter: none;
+  box-shadow: 0 0.5rem 1.2rem rgba(0, 0, 0, 0.3), 0 0 0 2px rgba(255, 255, 255, 0.84);
+  transform: translate(-50%, -50%) rotate(var(--pebble-rotation)) scale(1.17);
+}
+
+.dictionary-floating-pebble:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 4px;
+}
+
+.dictionary-floating-pebble.last-viewed {
+  filter: none;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.75), 0 0.35rem 0.9rem rgba(0, 0, 0, 0.2);
+}
+
+.dictionary-floating-pebble:hover img,
+.dictionary-floating-pebble:focus-visible img {
+  filter: none;
+  transform: none;
+}
+
 .dictionary-pedia-empty {
   display: grid;
   position: relative;
@@ -1052,6 +1178,8 @@ body {
   }
 
   .dictionary-floating-pebble {
+    top: var(--pebble-mobile-top);
+    left: var(--pebble-mobile-left);
     width: var(--pebble-mobile-width);
     height: var(--pebble-mobile-height);
     min-width: 0.72rem;

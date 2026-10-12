@@ -7,8 +7,10 @@ import './dictionary.css';
 import DictionaryHeader from '@/components/dictionary/DictionaryHeader';
 import {
     DictionaryBodyView,
+    DICTIONARY_NODES_PER_SCENE,
     DictionaryGrid,
 } from '@/components/dictionary/DictionaryGrid';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import WordModal from '@/components/dictionary/WordModal';
 import { ArtworkArchiveGrid } from '@/components/dictionary/ArtworkArchiveGrid';
 import ArtworkArchiveModal from '@/components/dictionary/ArtworkArchiveModal';
@@ -198,6 +200,8 @@ export default function DictionaryPage() {
         pediaBodyView === 'list' &&
         !selectedWord;
     const immersivePebbleView = mode === 'PEDIA' && pediaBodyView === 'pebbles';
+    const nodeSceneCount = Math.max(1, Math.ceil(filteredWords.length / DICTIONARY_NODES_PER_SCENE));
+    const nodeSceneNumber = (pediaNodeShuffleSeed % nodeSceneCount) + 1;
 
     useEffect(() => {
         if (!immersivePebbleView) return;
@@ -326,8 +330,7 @@ export default function DictionaryPage() {
             enabled={
                 !selectedWord &&
                 !selectedArtwork &&
-                (mode === 'KRAFT' ||
-                    (mode === 'PEDIA' && pediaBodyView === 'pebbles'))
+                mode === 'KRAFT'
             }
             onWhipDetected={() => {
                 if (mode === 'KRAFT') {
@@ -341,8 +344,8 @@ export default function DictionaryPage() {
         >
             <div
                 className={`dictionary-container ${immersivePebbleView ? 'is-immersive-pebble-view' : ''}`}
-                onMouseMove={handleMouseMove}
-                onTouchMove={handleTouchMove}
+                onMouseMove={immersivePebbleView ? undefined : handleMouseMove}
+                onTouchMove={immersivePebbleView ? undefined : handleTouchMove}
             >
                 {!immersivePebbleView && <DictionaryHeader
                     mode={mode}
@@ -381,14 +384,33 @@ export default function DictionaryPage() {
                         } ${immersivePebbleView ? 'is-immersive' : ''}`}
                     >
                         {immersivePebbleView && (
-                            <button
-                                type="button"
-                                className="dictionary-pebble-exit"
-                                onClick={() => setPediaBodyView('list')}
-                                aria-label="단어 목록으로 돌아가기"
-                            >
-                                목록으로
-                            </button>
+                            <>
+                                <button
+                                    type="button"
+                                    className="dictionary-pebble-exit"
+                                    onClick={() => setPediaBodyView('list')}
+                                    aria-label="단어 목록으로 돌아가기"
+                                >
+                                    <ArrowLeft size={16} strokeWidth={1.8} aria-hidden="true" />
+                                    <span>목록으로</span>
+                                </button>
+                                {filteredWords.length > DICTIONARY_NODES_PER_SCENE && (
+                                    <div className="dictionary-pebble-pagination">
+                                        <span className="dictionary-pebble-page-count" aria-live="polite">
+                                            {String(nodeSceneNumber).padStart(2, '0')} / {String(nodeSceneCount).padStart(2, '0')}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            className="dictionary-pebble-next"
+                                            onClick={() => setPediaNodeShuffleSeed(current => current + 1)}
+                                            aria-label="다음 단어 장면 보기"
+                                        >
+                                            <span>다음 장면</span>
+                                            <ArrowRight size={16} strokeWidth={1.8} aria-hidden="true" />
+                                        </button>
+                                    </div>
+                                )}
+                            </>
                         )}
                         {showInitialIndex && (
                             <DictionaryInitialIndex

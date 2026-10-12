@@ -13,6 +13,7 @@ import FormattedWord from "./FormattedWord";
 import DictionaryNodeNetwork from "./DictionaryNodeNetwork";
 
 export type DictionaryBodyView = "list" | "pebbles";
+export const DICTIONARY_NODES_PER_SCENE = 96;
 
 interface DictionaryGridProps {
   words: WordEntry[];
@@ -32,16 +33,7 @@ const PEBBLE_SHAPES = [
 ];
 
 const PEBBLE_ROTATIONS = [-8, 5, 10, -4, 7, -11];
-const PEBBLE_FIELD_SIZES = [
-  [8, 8],
-  [10, 9],
-  [12, 10],
-  [15, 12],
-  [18, 14],
-  [22, 17],
-  [27, 21],
-  [34, 26],
-] as const;
+const PEBBLE_FIELD_SIZES = [18, 22, 26, 30, 35, 42] as const;
 
 const getShapeIndex = (word: WordEntry) =>
   Array.from(word.id).reduce(
@@ -60,7 +52,7 @@ const getWordMediaUrl = (word: WordEntry) => {
     ? block.url.split("embed/")[1]?.split("?")[0]
     : "";
   return youtubeId
-    ? `https://img.youtube.com/vi/${youtubeId}/0.jpg`
+    ? `https://img.youtube.com/vi/${youtubeId}/default.jpg`
     : "";
 };
 
@@ -86,73 +78,31 @@ const seededUnit = (hash: number, salt: number) => {
 const getPebbleLayout = (
   word: WordEntry,
   index: number,
-  shuffleSeed: number,
 ) => {
-  const hash = hashWord(word.id, shuffleSeed);
-  const x = 3 + seededUnit(hash, 0x9e3779b9) * 94;
-  const y = 4 + Math.pow(seededUnit(hash, 0x85ebca6b), 0.72) * 92;
+  const hash = hashWord(word.id, 0);
+  const jitterX = seededUnit(hash, 0x9e3779b9) - 0.5;
+  const jitterY = seededUnit(hash, 0x85ebca6b) - 0.5;
+  const x = 3 + ((index % 12 + 0.5 + jitterX * 0.54) / 12) * 94;
+  const y = 11 + ((Math.floor(index / 12) + 0.5 + jitterY * 0.54) / 8) * 78;
+  const mobileX = 6 + ((index % 8 + 0.5 + jitterX * 0.4) / 8) * 88;
+  const mobileY = 12 + ((Math.floor(index / 8) + 0.5 + jitterY * 0.4) / 12) * 76;
   const sizeIndex = Math.floor(
     seededUnit(hash, 0xc2b2ae35) * PEBBLE_FIELD_SIZES.length,
   );
-  const [width, height] =
-    PEBBLE_FIELD_SIZES[
-      Math.min(sizeIndex, PEBBLE_FIELD_SIZES.length - 1)
-    ];
+  const size = PEBBLE_FIELD_SIZES[Math.min(sizeIndex, PEBBLE_FIELD_SIZES.length - 1)];
   return {
     x,
     y,
-    width,
-    height,
-    mobileWidth: Math.max(7, Math.round(width * 0.76)),
-    mobileHeight: Math.max(7, Math.round(height * 0.76)),
-    rotation: -24 + seededUnit(hash, 0x27d4eb2f) * 48,
-    hue: 72 + Math.round(seededUnit(hash, 0x165667b1) * 16),
-    saturation: 72 + Math.round(seededUnit(hash, 0xd3a2646c) * 24),
-    lightness: 42 + Math.round(seededUnit(hash, 0xfd7046c5) * 20),
-    opacity: 0.74 + seededUnit(hash, 0xb55a4f09) * 0.26,
-    zIndex: Math.round(y * 10) + (index % 9),
+    mobileX,
+    mobileY,
+    width: size,
+    height: size,
+    mobileWidth: Math.round(size * 0.78),
+    mobileHeight: Math.round(size * 0.78),
+    rotation: 0,
+    opacity: 0.68 + seededUnit(hash, 0xb55a4f09) * 0.27,
+    zIndex: index + 1,
   };
-};
-
-const pebbleReleaseTimers = new WeakMap<HTMLButtonElement, number>();
-
-const nudgePebbleAway = (
-  event: React.PointerEvent<HTMLButtonElement>,
-) => {
-  if (event.pointerType !== "mouse") return;
-
-  const pebble = event.currentTarget;
-  const pendingRelease = pebbleReleaseTimers.get(pebble);
-  if (pendingRelease) window.clearTimeout(pendingRelease);
-
-  const bounds = pebble.getBoundingClientRect();
-  const horizontal =
-    (bounds.left + bounds.width / 2 - event.clientX) /
-    Math.max(bounds.width / 2, 1);
-  const vertical =
-    (bounds.top + bounds.height / 2 - event.clientY) /
-    Math.max(bounds.height / 2, 1);
-  const x = Math.max(-1, Math.min(1, horizontal));
-  const y = Math.max(-1, Math.min(1, vertical));
-
-  pebble.style.setProperty("--pebble-nudge-x", `${(x * 6).toFixed(2)}px`);
-  pebble.style.setProperty("--pebble-nudge-y", `${(y * 3.5).toFixed(2)}px`);
-  pebble.style.setProperty(
-    "--pebble-nudge-roll",
-    `${(-x * 5 + y * 1.4).toFixed(2)}deg`,
-  );
-};
-
-const releasePebble = (event: React.PointerEvent<HTMLButtonElement>) => {
-  const pebble = event.currentTarget;
-  const releaseTimer = window.setTimeout(() => {
-    pebble.style.setProperty("--pebble-nudge-x", "0px");
-    pebble.style.setProperty("--pebble-nudge-y", "0px");
-    pebble.style.setProperty("--pebble-nudge-roll", "0deg");
-    pebbleReleaseTimers.delete(pebble);
-  }, 180);
-
-  pebbleReleaseTimers.set(pebble, releaseTimer);
 };
 
 export const DictionaryGrid: React.FC<DictionaryGridProps> = React.memo(({
@@ -162,14 +112,31 @@ export const DictionaryGrid: React.FC<DictionaryGridProps> = React.memo(({
   viewMode,
   onSelectWord,
 }) => {
+  const [failedMedia, setFailedMedia] = React.useState<Set<string>>(() => new Set());
+  const markMediaUnavailable = (id: string) => {
+    setFailedMedia((current) => {
+      if (current.has(id)) return current;
+      const next = new Set(current);
+      next.add(id);
+      return next;
+    });
+  };
+  const sceneWords = useMemo(() => {
+    if (viewMode !== "pebbles") return [];
+    const ordered = [...words].sort((a, b) =>
+      Number(Boolean(b.thumbnailUrl)) - Number(Boolean(a.thumbnailUrl)) ||
+      hashWord(a.id, 0) - hashWord(b.id, 0),
+    );
+    const sceneCount = Math.max(1, Math.ceil(ordered.length / DICTIONARY_NODES_PER_SCENE));
+    const scene = ((shuffleSeed % sceneCount) + sceneCount) % sceneCount;
+    return ordered.slice(scene * DICTIONARY_NODES_PER_SCENE, (scene + 1) * DICTIONARY_NODES_PER_SCENE);
+  }, [shuffleSeed, viewMode, words]);
   const nodeLayouts = useMemo(
-    () =>
-      words.map((word, index) =>
-        getPebbleLayout(word, index, shuffleSeed),
-      ),
-    [shuffleSeed, words],
+    () => sceneWords.map((word, index) => getPebbleLayout(word, index)),
+    [sceneWords],
   );
   const groupedWords = useMemo(() => {
+    if (viewMode !== "list") return [];
     const groups = new Map<HangulInitial, WordEntry[]>();
 
     words.forEach((word) => {
@@ -184,7 +151,7 @@ export const DictionaryGrid: React.FC<DictionaryGridProps> = React.memo(({
       const groupWords = groups.get(initial);
       return groupWords?.length ? [{ initial, words: groupWords }] : [];
     });
-  }, [words]);
+  }, [viewMode, words]);
 
   return (
     <main
@@ -203,7 +170,7 @@ export const DictionaryGrid: React.FC<DictionaryGridProps> = React.memo(({
               >
                 <div className="dictionary-word-rows">
                   {initialWords.map((word, wordIndex) => {
-                    const mediaUrl = getWordMediaUrl(word);
+                    const mediaUrl = failedMedia.has(word.id) ? "" : getWordMediaUrl(word);
                     const shapeIndex = getShapeIndex(word);
 
                     return (
@@ -257,7 +224,7 @@ export const DictionaryGrid: React.FC<DictionaryGridProps> = React.memo(({
                                 transform: `rotate(${PEBBLE_ROTATIONS[shapeIndex]}deg)`,
                               }}
                             >
-                              <img src={mediaUrl} alt="" />
+                              <img src={mediaUrl} alt="" loading="lazy" decoding="async" onError={() => markMediaUnavailable(word.id)} />
                               {isWordVideo(word) && (
                                 <Play
                                   className="dictionary-row-pebble-play"
@@ -282,13 +249,12 @@ export const DictionaryGrid: React.FC<DictionaryGridProps> = React.memo(({
       ) : (
         <section
           className="dictionary-pebble-field"
-          aria-label="단어 이미지를 우주 신경망처럼 모아 보는 노드 보기"
+          aria-label="단어를 여러 장면으로 나누어 보는 노드 보기"
         >
           <DictionaryNodeNetwork points={nodeLayouts} />
-          {words.length > 0 ? (
-            words.map((word, index) => {
-              const mediaUrl = getWordMediaUrl(word);
-              const shapeIndex = getShapeIndex(word);
+          {sceneWords.length > 0 ? (
+            sceneWords.map((word, index) => {
+              const mediaUrl = failedMedia.has(word.id) ? "" : getWordMediaUrl(word);
               const layout = nodeLayouts[index];
 
               return (
@@ -306,25 +272,21 @@ export const DictionaryGrid: React.FC<DictionaryGridProps> = React.memo(({
                       "--pebble-mobile-height": `${layout.mobileHeight}px`,
                       "--pebble-left": `${layout.x}%`,
                       "--pebble-top": `${layout.y}%`,
+                      "--pebble-mobile-left": `${layout.mobileX}%`,
+                      "--pebble-mobile-top": `${layout.mobileY}%`,
                       "--pebble-rotation": `${layout.rotation}deg`,
                       "--pebble-counter-rotation": `${-layout.rotation}deg`,
-                      "--pebble-hue": layout.hue,
-                      "--pebble-saturation": `${layout.saturation}%`,
-                      "--pebble-lightness": `${layout.lightness}%`,
                       "--pebble-opacity": layout.opacity,
                       "--pebble-z": layout.zIndex,
-                      "--pebble-delay": `${(index % 32) * 0.006}s`,
-                      borderRadius: PEBBLE_SHAPES[shapeIndex],
+                      borderRadius: mediaUrl ? "28%" : "50%",
                     } as React.CSSProperties
                   }
                   data-resonance-gesture="allow"
                   data-word={word.word}
                   onClick={() => onSelectWord(word)}
-                  onPointerMove={nudgePebbleAway}
-                  onPointerLeave={releasePebble}
                   aria-label={`${word.word} 상세 보기`}
                 >
-                  {mediaUrl && <img src={mediaUrl} alt="" />}
+                  {mediaUrl && <img src={mediaUrl} alt="" loading="lazy" decoding="async" onError={() => markMediaUnavailable(word.id)} />}
                   {isWordVideo(word) && (
                     <Play
                       className="dictionary-floating-pebble-play"
