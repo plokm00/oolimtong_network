@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Volume2, VolumeX } from "lucide-react";
 
 interface CinematicTransitionProps {
-    mode: 'none' | 'text' | 'game' | 'vortex'; // Aligned with entryStep
+    mode: 'none' | 'text' | 'game' | 'user-game' | 'vortex';
     user: { nickname: string; ninnikTitle: string } | null;
     isMobile: boolean;
     isTransitioning?: boolean; // For the 'game' blackout state

@@ -691,6 +691,57 @@ body {
   padding-bottom: 2rem;
 }
 
+.dictionary-container.is-immersive-pebble-view {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  width: 100vw;
+  height: 100dvh;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.dictionary-pedia-shell.is-immersive {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.dictionary-pedia-shell.is-immersive .dictionary-pedia-body {
+  height: 100%;
+  padding: 0;
+}
+
+.dictionary-pedia-shell.is-immersive .dictionary-pebble-field {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.dictionary-pebble-exit {
+  position: fixed;
+  top: max(1rem, env(safe-area-inset-top));
+  right: max(1rem, env(safe-area-inset-right));
+  z-index: 100;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid rgba(204, 255, 0, 0.28);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.65);
+  color: #d7f394;
+  font: inherit;
+  font-size: 0.75rem;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+}
+
+.dictionary-pebble-exit:hover,
+.dictionary-pebble-exit:focus-visible {
+  border-color: #ccff00;
+  color: #ccff00;
+}
+
 .dictionary-pebble-field {
   position: relative;
   isolation: isolate;
@@ -967,7 +1018,7 @@ body {
     padding: 1rem 0.8rem 9rem 0;
   }
 
-  .dictionary-pedia-shell:not(.has-initial-index) .dictionary-pedia-body {
+  .dictionary-pedia-shell:not(.has-initial-index):not(.is-immersive) .dictionary-pedia-body {
     padding-left: 0.8rem;
   }
 

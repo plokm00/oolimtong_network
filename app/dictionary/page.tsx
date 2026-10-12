@@ -195,7 +195,23 @@ export default function DictionaryPage() {
 
     const showInitialIndex =
         mode === 'PEDIA' &&
+        pediaBodyView === 'list' &&
         !selectedWord;
+    const immersivePebbleView = mode === 'PEDIA' && pediaBodyView === 'pebbles';
+
+    useEffect(() => {
+        if (!immersivePebbleView) return;
+
+        const previousHtmlOverflow = document.documentElement.style.overflow;
+        const previousBodyOverflow = document.body.style.overflow;
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+
+        return () => {
+            document.documentElement.style.overflow = previousHtmlOverflow;
+            document.body.style.overflow = previousBodyOverflow;
+        };
+    }, [immersivePebbleView]);
 
     const selectedExhibition = useMemo(
         () => EXHIBITIONS.find(exhibition => exhibition.id === exhibitionId) || null,
@@ -324,11 +340,11 @@ export default function DictionaryPage() {
             }}
         >
             <div
-                className="dictionary-container"
+                className={`dictionary-container ${immersivePebbleView ? 'is-immersive-pebble-view' : ''}`}
                 onMouseMove={handleMouseMove}
                 onTouchMove={handleTouchMove}
             >
-                <DictionaryHeader
+                {!immersivePebbleView && <DictionaryHeader
                     mode={mode}
                     setMode={setMode}
                     search={search}
@@ -354,7 +370,7 @@ export default function DictionaryPage() {
                             }}
                         />
                     )}
-                />
+                />}
 
                 {mode === 'PEDIA' ? (
                     <div
@@ -362,8 +378,18 @@ export default function DictionaryPage() {
                             showInitialIndex
                                 ? 'has-initial-index'
                                 : ''
-                        }`}
+                        } ${immersivePebbleView ? 'is-immersive' : ''}`}
                     >
+                        {immersivePebbleView && (
+                            <button
+                                type="button"
+                                className="dictionary-pebble-exit"
+                                onClick={() => setPediaBodyView('list')}
+                                aria-label="단어 목록으로 돌아가기"
+                            >
+                                목록으로
+                            </button>
+                        )}
                         {showInitialIndex && (
                             <DictionaryInitialIndex
                                 availableInitials={availableInitials}
