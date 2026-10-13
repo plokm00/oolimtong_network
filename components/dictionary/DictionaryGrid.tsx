@@ -13,7 +13,6 @@ import FormattedWord from "./FormattedWord";
 import DictionaryNodeNetwork from "./DictionaryNodeNetwork";
 
 export type DictionaryBodyView = "list" | "pebbles";
-export const DICTIONARY_NODES_PER_SCENE = 96;
 
 interface DictionaryGridProps {
   words: WordEntry[];
@@ -33,7 +32,16 @@ const PEBBLE_SHAPES = [
 ];
 
 const PEBBLE_ROTATIONS = [-8, 5, 10, -4, 7, -11];
-const PEBBLE_FIELD_SIZES = [18, 22, 26, 30, 35, 42] as const;
+const PEBBLE_FIELD_SIZES = [
+  [8, 8],
+  [10, 9],
+  [12, 10],
+  [15, 12],
+  [18, 14],
+  [22, 17],
+  [27, 21],
+  [34, 26],
+] as const;
 
 const getShapeIndex = (word: WordEntry) =>
   Array.from(word.id).reduce(
@@ -78,30 +86,27 @@ const seededUnit = (hash: number, salt: number) => {
 const getPebbleLayout = (
   word: WordEntry,
   index: number,
+  shuffleSeed: number,
 ) => {
-  const hash = hashWord(word.id, 0);
-  const jitterX = seededUnit(hash, 0x9e3779b9) - 0.5;
-  const jitterY = seededUnit(hash, 0x85ebca6b) - 0.5;
-  const x = 3 + ((index % 12 + 0.5 + jitterX * 0.54) / 12) * 94;
-  const y = 11 + ((Math.floor(index / 12) + 0.5 + jitterY * 0.54) / 8) * 78;
-  const mobileX = 6 + ((index % 8 + 0.5 + jitterX * 0.4) / 8) * 88;
-  const mobileY = 12 + ((Math.floor(index / 8) + 0.5 + jitterY * 0.4) / 12) * 76;
+  const hash = hashWord(word.id, shuffleSeed);
+  const x = 3 + seededUnit(hash, 0x9e3779b9) * 94;
+  const y = 4 + Math.pow(seededUnit(hash, 0x85ebca6b), 0.72) * 92;
   const sizeIndex = Math.floor(
     seededUnit(hash, 0xc2b2ae35) * PEBBLE_FIELD_SIZES.length,
   );
-  const size = PEBBLE_FIELD_SIZES[Math.min(sizeIndex, PEBBLE_FIELD_SIZES.length - 1)];
+  const [width, height] = PEBBLE_FIELD_SIZES[Math.min(sizeIndex, PEBBLE_FIELD_SIZES.length - 1)];
   return {
     x,
     y,
-    mobileX,
-    mobileY,
-    width: size,
-    height: size,
-    mobileWidth: Math.round(size * 0.78),
-    mobileHeight: Math.round(size * 0.78),
-    rotation: 0,
-    opacity: 0.68 + seededUnit(hash, 0xb55a4f09) * 0.27,
-    zIndex: index + 1,
+    mobileX: x,
+    mobileY: y,
+    width,
+    height,
+    mobileWidth: Math.max(7, Math.round(width * 0.76)),
+    mobileHeight: Math.max(7, Math.round(height * 0.76)),
+    rotation: -24 + seededUnit(hash, 0x27d4eb2f) * 48,
+    opacity: 0.74 + seededUnit(hash, 0xb55a4f09) * 0.26,
+    zIndex: Math.round(y * 10) + (index % 9),
   };
 };
 
@@ -121,19 +126,11 @@ export const DictionaryGrid: React.FC<DictionaryGridProps> = React.memo(({
       return next;
     });
   };
-  const sceneWords = useMemo(() => {
-    if (viewMode !== "pebbles") return [];
-    const ordered = [...words].sort((a, b) =>
-      Number(Boolean(b.thumbnailUrl)) - Number(Boolean(a.thumbnailUrl)) ||
-      hashWord(a.id, 0) - hashWord(b.id, 0),
-    );
-    const sceneCount = Math.max(1, Math.ceil(ordered.length / DICTIONARY_NODES_PER_SCENE));
-    const scene = ((shuffleSeed % sceneCount) + sceneCount) % sceneCount;
-    return ordered.slice(scene * DICTIONARY_NODES_PER_SCENE, (scene + 1) * DICTIONARY_NODES_PER_SCENE);
-  }, [shuffleSeed, viewMode, words]);
   const nodeLayouts = useMemo(
-    () => sceneWords.map((word, index) => getPebbleLayout(word, index)),
-    [sceneWords],
+    () => viewMode === "pebbles"
+      ? words.map((word, index) => getPebbleLayout(word, index, shuffleSeed))
+      : [],
+    [shuffleSeed, viewMode, words],
   );
   const groupedWords = useMemo(() => {
     if (viewMode !== "list") return [];
@@ -249,12 +246,13 @@ export const DictionaryGrid: React.FC<DictionaryGridProps> = React.memo(({
       ) : (
         <section
           className="dictionary-pebble-field"
-          aria-label="단어를 여러 장면으로 나누어 보는 노드 보기"
+          aria-label="단어를 조약돌처럼 모아 보는 노드 보기"
         >
           <DictionaryNodeNetwork points={nodeLayouts} />
-          {sceneWords.length > 0 ? (
-            sceneWords.map((word, index) => {
+          {words.length > 0 ? (
+            words.map((word, index) => {
               const mediaUrl = failedMedia.has(word.id) ? "" : getWordMediaUrl(word);
+              const shapeIndex = getShapeIndex(word);
               const layout = nodeLayouts[index];
 
               return (
@@ -272,13 +270,13 @@ export const DictionaryGrid: React.FC<DictionaryGridProps> = React.memo(({
                       "--pebble-mobile-height": `${layout.mobileHeight}px`,
                       "--pebble-left": `${layout.x}%`,
                       "--pebble-top": `${layout.y}%`,
-                      "--pebble-mobile-left": `${layout.mobileX}%`,
-                      "--pebble-mobile-top": `${layout.mobileY}%`,
+                      "--pebble-mobile-left": `${layout.x}%`,
+                      "--pebble-mobile-top": `${layout.y}%`,
                       "--pebble-rotation": `${layout.rotation}deg`,
                       "--pebble-counter-rotation": `${-layout.rotation}deg`,
                       "--pebble-opacity": layout.opacity,
                       "--pebble-z": layout.zIndex,
-                      borderRadius: mediaUrl ? "28%" : "50%",
+                      borderRadius: PEBBLE_SHAPES[shapeIndex],
                     } as React.CSSProperties
                   }
                   data-resonance-gesture="allow"

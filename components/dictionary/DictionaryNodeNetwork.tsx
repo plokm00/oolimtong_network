@@ -43,7 +43,9 @@ const buildEdges = (points: DictionaryNodePoint[], mobile: boolean) => {
       }
     }
 
-    if (closest >= 0 && distance < (mobile ? 360 : 240)) edges.push([closest, index]);
+    if (index % 5 === 0 && closest >= 0 && distance < (mobile ? 360 : 240)) {
+      edges.push([closest, index]);
+    }
     const key = `${cellX}:${cellY}`;
     const bucket = buckets.get(key) || [];
     bucket.push(index);
@@ -93,7 +95,7 @@ export default function DictionaryNodeNetwork({ points }: DictionaryNodeNetworkP
 
       // A still drawing replaces the animation loop that ran on every frame.
       points.forEach((point, index) => {
-        if (index % 3 !== 0) return;
+        if (index % 12 !== 0) return;
         const { x, y } = coordinate(point);
         context.beginPath();
         context.arc(x, y, 1, 0, Math.PI * 2);

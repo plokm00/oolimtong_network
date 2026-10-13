@@ -957,8 +957,7 @@ body {
   background: radial-gradient(ellipse 62% 52% at 50% 45%, #171b24 0%, #080a0e 76%);
 }
 
-.dictionary-pebble-exit,
-.dictionary-pebble-next {
+.dictionary-pebble-exit {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -985,35 +984,16 @@ body {
   right: auto;
 }
 
-.dictionary-pebble-exit:hover,
-.dictionary-pebble-next:hover {
+.dictionary-pebble-exit:hover {
   border-color: rgba(245, 248, 252, 0.48);
   background: rgba(48, 55, 66, 0.96);
   color: #fff;
   transform: translateY(-2px);
 }
 
-.dictionary-pebble-exit:focus-visible,
-.dictionary-pebble-next:focus-visible {
+.dictionary-pebble-exit:focus-visible {
   outline: 2px solid #fff;
   outline-offset: 3px;
-}
-
-.dictionary-pebble-pagination {
-  position: fixed;
-  z-index: 100;
-  right: max(1rem, env(safe-area-inset-right));
-  bottom: max(1rem, env(safe-area-inset-bottom));
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-}
-
-.dictionary-pebble-page-count {
-  color: rgba(241, 245, 249, 0.58);
-  font-size: 0.7rem;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.13em;
 }
 
 .dictionary-node-network {
@@ -1023,9 +1003,9 @@ body {
 }
 
 .dictionary-floating-pebble {
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  background: #e4eaf0;
-  box-shadow: 0 0.2rem 0.55rem rgba(0, 0, 0, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: linear-gradient(145deg, #f5f6f4 0%, #d5dcdf 55%, #aeb9bf 100%);
+  box-shadow: 0 0.16rem 0.38rem rgba(0, 0, 0, 0.26), inset 0 0 0 1px rgba(255, 255, 255, 0.12);
   animation: none;
   transform: translate(-50%, -50%) rotate(var(--pebble-rotation));
   transition: opacity 0.18s ease, transform 0.22s ease, box-shadow 0.22s ease;
